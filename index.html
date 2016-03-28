@@ -330,8 +330,8 @@
             context.fillText("$" + Results.monthly_total, 0, 13);
             context.fillText("$0", 0, 300);
 
-            context.fillText("$" + (Results.fiber_tax / 12.00) + " Taxed Millage", 340, 35);
-            context.fillText("$" + Results.projected_total + " Projected Monthly Services", 340, 75);
+            context.fillText("$" + Results.fiber_tax + " Taxed Millage", 340, 35);
+            context.fillText("$" + (Results.projected_total - Results.fiber_tax) + " Projected Monthly Services", 340, 75);
             context.fillText("$" + Results.monthly_total + " Current Monthly Services", 340, 115);
 
 
@@ -349,7 +349,7 @@
 
         },
       total: function () {
-          Results.projected_total = 50 + parseInt(Results.video, 10) + parseInt(Results.phone, 10);
+          Results.projected_total = 50 + parseInt(Results.video, 10) + parseInt(Results.phone, 10) + parseFloat(Results.fiber_tax);
           Results.annual_savings = parseInt(12 * Results.monthly_total, 10) - parseInt(12 * Results.projected_total, 10);
         }
     }
