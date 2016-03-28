@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>When will my fiber pay for itself?</title>
+  <meta charset="utf-8">
+  <style>
+    body {
+      font: normal 18px Ubuntu, sans-serif;
+    }
+    table {
+      width: 100%;
+    }
+    th, td {
+      width: 25%;
+      vertical-align: top;
+    }
+    th {
+      text-align: left;
+    }
+    th[scope=row] {
+      text-align: right;
+    }
+    td {
+      text-align: right;
+    }
+    input {
+      font-size: inherit;
+      font-family: inherit;
+      text-align: right;
+    }
+    .container {
+      max-width: 1024px;
+      margin: auto;
+    }
+    .note {
+      color: #ccc;
+      font-size: 80%;
+    }
+
+    .barchart {
+    }
+    .barchart > .field {
+      width: 300px;
+      height: 300px;
+      border-bottom: solid 1px #ccc;
+      border-left: solid 1px #ccc;
+    }
+    .swatch {
+      width: 2em;
+      height: 2em;
+    }
+    .swatch:after {
+      content: attr(data-value);
+    }
+
+    .projected_services {
+      background: #455C33;
+    }
+    .projected_tax {
+      background: #994542;
+    }
+    .current_services {
+      background: #788285;
+    }
+    #taxable_value_label {
+      display: block;
+      text-align: center;
+    }
+    #taxable_value_range {
+      display: block;
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <form>
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>Current Monthly Cost</th>
+            <th>Future Monthly Cost</th>
+            <th>Annual Savings</th>
+          </tr>
+         <tbody>
+          <tr>
+            <th scope="row">
+              <label>
+                Internet
+              </label>
+            </th>
+            <td>
+              <input type="number" name="monthly_internet" id="internet">
+              <p>How much you pay for internet per month. If you pay a bundled rate, just fill in this box.</p>
+            </td>
+            <td>
+              50
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">
+              <label>
+                 Telephone
+              </label>
+            </th>
+            <td>
+              <input type="number" name="monthly_telphone" id="telephone">
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">
+              <label>
+                Video
+              </label>
+            </th>
+            <td>
+              <input type="number" name="monthly_video" id="video">
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">
+              <label>
+                Fiber Tax
+              </label>
+            </th>
+            <td>
+              0
+            </td>
+            <td>
+            </td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <th scope="row">Annual Cost</th>
+            <td id="annual_current"></td>
+            <td id="annual_future"></td>
+          </tr>
+        </tfoot>
+      </table>
+
+  <div>
+    <p>The average taxable value in Laketown Township is $50,000.
+      You can enter your exact amount below if you know it or you can call the township
+      to get your taxable value: <nobr>(616) 335-3050.</nobr>
+    </p>
+    <input type="number" inputmode="numeric" name="taxable_value" id="taxable_value" value="50000">
+  </div>
+
+
+  <figure class="barchart">
+    <div class="field">
+      
+    </div>
+    <dl class="current" >
+      <dt>Current Monthly Cost</dt>
+      <dd id="chart_current" class="current_services swatch"></dd>
+    </dl>
+    <dl class="projected">
+      <dt>Projected monthly Cost</dt>
+      <dd id="chart_projected_service" class="projected_services swatch"></dd>
+      <dd id="chart_projected_tax" class="projected_tax swatch"></dd>
+    </dl>
+
+  </figure>
+
+<script>
+  var internet = document.getElementById("internet"),
+    telephone = document.getElementById("telephone"),
+    video = document.getElementById("video"),
+    monthly_tax = document.getElementById("monthly_tax"),
+    annual_current = document.getElementById("annual_current"),
+    taxable_range = document.getElementById("taxable_value_range"),
+    taxable_value = document.getElementById("taxable_value"),
+    update_chart  = function () {
+        var current = annual_current.textContent,
+          chart_current = document.getElementById("chart_current");
+        chart_current.setAttribute('data-value', current);
+      },
+    compute = function () {
+        value = 0;
+        internet.value.length ? value += parseInt(internet.value, 10) : 0;
+        telephone.value.length ? value += parseInt(telephone.value, 10) : 0;
+        video.value.length ? value += parseInt(video.value, 10) : 0;
+        annual_current.textContent = value;
+        update_chart();
+      };
+  internet.addEventListener("change", compute);
+  video.addEventListener("change", compute);
+  telephone.addEventListener("change", compute);
+
+</script>
+
+</body>
+</html>
