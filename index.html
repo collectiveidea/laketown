@@ -87,6 +87,9 @@
     figure {
       margin-top: 3em;
     }
+    figcaption {
+      margin: 1em auto;
+    }
 
   </style>
 </head>
@@ -307,43 +310,60 @@
           var ymax, graph = document.getElementById("graph"), context = graph.getContext("2d"),
             difference = Results.monthly_total - Results.projected_total,
             projection, savings;
+          context.fillStyle = "#8C999E";
+          context.fillRect(310, 100, 20, 20);
+          context.fillStyle = "#296BB0";
+          context.fillRect(310, 60, 20, 20);
+          context.fillStyle = "#A6D15E";
+          context.fillRect(310, 20, 20, 20);
+          context.font= "normal 12px 'Ubuntu Mono', 'Roboto Mono', 'Segoe Mono', Consolas, Menlo, monospace";
+          context.fillStyle = "#666";
+          context.fillText("$" + Results.fiber_tax + " Fiber Millage", 340, 35);
+          context.fillText("$" + (Results.projected_total - Results.fiber_tax) + " Projected Monthly Services", 340, 75);
+          context.fillText("$" + Results.monthly_total + " Current Monthly Services", 340, 115);
+          context.fillText("$0", 0, 300);
+          context.moveTo(25, 0);
+          context.lineTo(30.5, 0);
+          context.lineTo(30.5, 300);
+          context.moveTo(25, 300);
+          context.lineTo(300, 300);
+          context.strokeStyle = "#ccc";
+          context.stroke();
+
           if (difference < 0) {
-            ymax = Result.projected_total;
-          } else {
-            ymax = Results.current_total;
+            ymax = Results.projected_total;
+
+            current = 300 * (Results.monthly_total / Results.projected_total);
+            projection = 300 * ((Results.projected_total - Results.fiber_tax) / Results.projected_total)
+            millage = 300 * (Results.fiber_tax / Results.projected_total)
+
             context.fillStyle = "#8C999E";
-            context.fillRect(40, 300, 80, -300);
-            context.fillRect(310, 100, 20, 20);
+            context.fillRect(40, 300, 80, -current);
 
             context.fillStyle = "#296BB0";
+            context.fillRect(160, 300, 80, -(projection));
+
+            context.fillStyle = "#A6D15E";
+            context.fillRect(160, 300 - projection, 80, -millage);
+            context.fillStyle = "#666";
+            context.fillText("$" + Math.floor(Results.projected_total), 0, 13);
+
+          } else {
+            ymax = Results.current_total;
             projection = 300 * (50 / Results.monthly_total)
             millage = Math.round(100 * (Results.fiber_tax / Results.projected_total)) / 100;
+
+            context.fillStyle = "#8C999E";
+            context.fillRect(40, 300, 80, -300);
+
+            context.fillStyle = "#296BB0";
             context.fillRect(160, 300, 80, -(projection));
-            context.fillRect(310, 60, 20, 20);
 
             context.fillStyle = "#A6D15E";
             context.fillRect(160, 300 - projection, 80, -(300 * millage));
-            context.fillRect(310, 20, 20, 20);
 
-            context.font= "normal 12px 'Ubuntu Mono', 'Roboto Mono', 'Segoe Mono', Consolas, Menlo, monospace";
             context.fillStyle = "#666";
-            context.fillText("$" + Results.monthly_total, 0, 13);
-            context.fillText("$0", 0, 300);
-
-            context.fillText("$" + Results.fiber_tax + " Fiber Millage", 340, 35);
-            context.fillText("$" + (Results.projected_total - Results.fiber_tax) + " Projected Monthly Services", 340, 75);
-            context.fillText("$" + Results.monthly_total + " Current Monthly Services", 340, 115);
-
-
-            context.moveTo(25, 0);
-            context.lineTo(30.5, 0);
-            context.lineTo(30.5, 300);
-            context.moveTo(25, 300);
-            context.lineTo(300, 300);
-            context.strokeStyle = "#ccc";
-            context.stroke();
-
-
+            context.fillText("$" + Math.floor(Results.monthly_total), 0, 13);
           }
 
 
