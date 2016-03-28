@@ -93,7 +93,7 @@
 
     <div class="phase" id="phase1">
       <h2>Enter your current monthly costs <sup><a href="#bundles">*</a></sup></h2>
-      <form action="#phase2" id="costs">
+      <form action="#phase2" id="costs" data-phase="phase1">
         <fieldset>
           <label for="internet">Internet</label>
           $ <input type="numeric" inputmode="number" name="internet" id="internet">
@@ -118,12 +118,12 @@
     </div>
     <div class="phase" id="phase2" style="display: none";>
       <h2>Enter your home’s taxable value<sup><a href="#tv_lookup">*</a></sup></h2>
-      <form action="#phase3" id="taxable_value">
+      <form action="#phase3" data-phase="phase2">
         <fieldset>
           <label for="taxable_value">Taxable Value</label>
           $ <input type="numeric" inputmode="number" name="taxable_value" id="taxable_value" value="30000">
         </fieldset>
-        <p class="total">Monthly Fiber Tax: <strong id="fiber_tax">$4.14</strong></p>
+        <p class="total">Monthly Taxable Millage: <strong id="fiber_tax">$4.14</strong></p>
         <button type="submit">Next &gt;</button>
       </form>
       <p class="note" id="tv_lookup">* Don’t know your taxable value? No problem. You can find it by calling the township at <a href="tel:+16163353050" class="tel">(616) 335-3050</a>
@@ -142,27 +142,27 @@
         <tbody>
           <tr>
             <th scope="row">Internet</th>
-            <td data-name="current_internet"></td>
+            <td data-name="internet"></td>
             <td>$50</td>
           </tr><tr>
             <th scope="row">Phone</th>
-            <td data-name="current_phone"></td>
-            <td data-name="projected_phone"></td>
+            <td data-name="phone"></td>
+            <td data-name="phone"></td>
           </tr><tr>
             <th scope="row">Video</th>
-            <td data-name="current_video"></td>
-            <td data-name="projected_video"></td>
+            <td data-name="video"></td>
+            <td data-name="video"></td>
           </tr>
           <tr>
-            <th scope="row">Fiber Tax</th>
-            <td>0</td>
+            <th scope="row">Taxed Millage</th>
+            <td>$0</td>
             <td data-name="fiber_tax"></td>
           </tr>
         </tbody>
         <tfoot>
           <tr>
             <th scope="row">Total</th>
-            <td data-name="current_total"></td>
+            <td data-name="monthly_total"></td>
             <td data-name="projected_total"></td>
           </tr>
         <tr>
@@ -179,90 +179,137 @@
       var phases = document.querySelectorAll(".phase"),
         idx = 0;
       event.preventDefault();
+      if (Phases[(this.getAttribute("data-phase"))].compute !== undefined) {
+        Phases[(this.getAttribute("data-phase"))].compute();
+      }
+      
       while(idx < phases.length) {
         phases[idx].style.display = "none";
         idx += 1;
       }
       document.querySelector(this.getAttribute("action")).style.display = "block";
-      Phases[this.getAttribute("action").replace('#','')].init();
-    },
-  Results = {};
-  Phases = {
-
-    phase1 = {
-      init: function () {
-      },
+      Phases[(this.getAttribute("action").replace('#',''))].init();
     };
 
-    phase2 = {};
-    phase3 = {
+  Results = {};
+
+  Procede = function () {
+    window.clearTimeout(window.delay);
+  };
+
+
+  Phases = {
+
+    phase1: {
+
       init: function () {
+        this.values = document.querySelectorAll("#costs input");
+        this.taxable_value = document.getElementById("taxable_value");
+        this.fiber_tax = document.getElementById("fiber_tax");
+        this.addListeners();
       },
 
-      fillTable = function () {
+      addListeners: function () {
+          var idx = 0,
+            values = this.values;
+          while (idx < values.length) {
+            this.listen(values[idx]);
+            idx += 1;
+          }
+          this.listen(taxable_value);
+        },
+
+      listen: function (field) {
+          field.addEventListener("change", this.compute);
+          field.addEventListener("keyup", this.wait);
+          field.addEventListener("keypress", Procede);
+          field.addEventListener("focus", Procede);
+        },
+
+      wait: function () {
+        window.delay = window.setTimeout(Phases.phase1.compute, 500);
+      },
+
+      compute: function () {
+        var idx = 0, total = 0, values = Phases.phase1.values,
+          monthly_total = document.getElementById("current_monthly");
+        while (idx < values.length) {
+          if (values[idx].value) {
+            total += parseInt(values[idx].value, 10);
+            Results[values[idx].getAttribute('name')] = values[idx].value;
+          } else {
+            Results[values[idx].getAttribute('name')] = 0;
+          }
+          idx += 1;
+        }
+        monthly_total.textContent = "$" + total;
+        Results.monthly_total = total;
+       }
+    },
+
+    phase2: {
+      init: function () {
+        var field = document.getElementById('taxable_value');
+        field.addEventListener("change", this.compute);
+        field.addEventListener("keyup", this.wait);
+        field.addEventListener("keypress", Procede);
+        field.addEventListener("focus", Procede);
+      },
+
+      wait: function () {
+        window.delay = window.setTimeout(Phases.phase2.compute, 500);
+      },
+
+      compute: function () {
+        var fiber_tax = document.getElementById("fiber_tax"),
+          field = document.getElementById('taxable_value');
+        Results.fiber_tax = (Math.round(100 * (parseInt(field.value, 10) * 0.0016572) / 12) / 100.00);
+        fiber_tax.textContent = "$" + Results.fiber_tax;
+      }
+
+    },
+
+    phase3: {
+      init: function () {
+        this.total();
+        this.fillTable();
+      },
+
+      fillTable: function () {
           var cells = document.getElementsByTagName("td"),
             idx = 0,
             result;
           while (idx < cells.length) {
-            result = cells[idx].getAttribute('data-name')
-            if (result !== null) {
-              cells[idx].textContent = "$" + Results[result]
+            if (cells[idx].hasAttribute('data-name')) {
+              result = cells[idx].getAttribute('data-name')
+              if (result !== undefined) {
+                cells[idx].textContent = "$" + Results[result];
+              } else {
+                cells[idx].textContent = "$0";
+              }
             }
             idx += 1;
           }
         },
 
-    };
+      total: function () {
+        Results.projected_total = 50 + parseInt(Results.video, 10) + parseInt(Results.phone, 10);
+        Results.annual_savings = parseInt(12 * Results.monthly_total, 10) - parseInt(12 * Results.projected_total, 10);
+      }
+    }
   };
-  var values = document.querySelectorAll("#costs input"),
-    monthly_total = document.getElementById("current_monthly"),
-    taxable_value = document.getElementById("taxable_value"),
-    fiber_tax = document.getElementById("fiber_tax"),
-    forms = document.getElementsByTagName("form"),
-    delay,
-    addListeners = function () {
-        var idx = 0;
-        while (idx < values.length) {
-          listen(values[idx]);
-          idx += 1;
-        }
-        listen(taxable_value);
-        idx = 0;
-        while (idx < forms.length) {
-          forms[idx].addEventListener("submit", incrementPhase);
-          idx += 1;
-        }
-      }
-
-    listen = function (field) {
-        field.addEventListener("change", compute);
-        field.addEventListener("keyup", wait);
-        field.addEventListener("keypress", procede);
-        field.addEventListener("focus", procede);
-      },
 
 
-    procede = function () {
-        window.clearTimeout(delay);
-      },
-
-    wait = function () {
-      delay = window.setTimeout(compute, 500);
-      },
-
-    compute = function () {
-      var idx = 0, total = 0;
-      while (idx < values.length) {
-        if (values[idx].value) {
-          total += parseInt(values[idx].value, 10);
-          results[valus[idx].getAttribute('name')] = values[idx].value;
-        }
-        idx += 1;
-      }
-      monthly_total.textContent = "$" + total;
-      results.monthly_total = total;
-     };
-  addListeners()
+  init = function () {
+    var idx = 0,
+      forms = document.getElementsByTagName("form");
+    while (idx < forms.length) {
+      forms[idx].addEventListener("submit", IncrementPhase);
+      idx += 1;
+    }
+    Phases.phase1.init();
+  };
+  init();
 </script>
 </body>
 </html>
