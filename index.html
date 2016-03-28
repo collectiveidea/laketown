@@ -1,11 +1,11 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <title>When will my fiber pay for itself?</title>
+  <title>How much will FriIber cost me?</title>
   <meta charset="utf-8">
   <style>
     body {
-      font: normal 18px Ubuntu, sans-serif;
+      font: normal 18px Ubuntu, Roboto, "Segoe UI", Myriad, Lucida, sans-serif;
     }
     a {
       color: #296BB0;
@@ -82,6 +82,10 @@
     .total {
       font-size: 130%;
       text-align: right;
+    }
+
+    figure {
+      margin-top: 3em;
     }
 
   </style>
@@ -171,6 +175,12 @@
           <td data-name="annual_savings"></td>
         </tfoot>
       </table>
+
+      <figure>
+        <figcaption>Projected Monthly Costs</figcaption>
+        <canvas id="graph" width="535" height="300"></canvas>
+      </figure
+
     </div>
 
   </div>
@@ -273,6 +283,7 @@
       init: function () {
         this.total();
         this.fillTable();
+        this.graph();
       },
 
       fillTable: function () {
@@ -292,10 +303,55 @@
           }
         },
 
+      graph: function () {
+          var ymax, graph = document.getElementById("graph"), context = graph.getContext("2d"),
+            difference = Results.monthly_total - Results.projected_total,
+            projection, savings;
+          if (difference < 0) {
+            ymax = Result.projected_total;
+          } else {
+            ymax = Results.current_total;
+            context.fillStyle = "#8C999E";
+            context.fillRect(40, 300, 80, -300);
+            context.fillRect(310, 100, 20, 20);
+
+            context.fillStyle = "#296BB0";
+            projection = 300 * (50 / Results.monthly_total)
+            millage = Math.round(100 * (Results.fiber_tax / Results.projected_total)) / 100;
+            context.fillRect(160, 300, 80, -(projection));
+            context.fillRect(310, 60, 20, 20);
+
+            context.fillStyle = "#A6D15E";
+            context.fillRect(160, 300 - projection, 80, -(300 * millage));
+            context.fillRect(310, 20, 20, 20);
+
+            context.font= "normal 12px 'Ubuntu Mono', 'Roboto Mono', 'Segoe Mono', Consolas, Menlo, monospace";
+            context.fillStyle = "#666";
+            context.fillText("$" + Results.monthly_total, 0, 13);
+            context.fillText("$0", 0, 300);
+
+            context.fillText("$" + (Results.fiber_tax / 12.00) + " Taxed Millage", 340, 35);
+            context.fillText("$" + Results.projected_total + " Projected Monthly Services", 340, 75);
+            context.fillText("$" + Results.monthly_total + " Current Monthly Services", 340, 115);
+
+
+            context.moveTo(25, 0);
+            context.lineTo(30.5, 0);
+            context.lineTo(30.5, 300);
+            context.moveTo(25, 300);
+            context.lineTo(300, 300);
+            context.strokeStyle = "#ccc";
+            context.stroke();
+
+
+          }
+
+
+        },
       total: function () {
-        Results.projected_total = 50 + parseInt(Results.video, 10) + parseInt(Results.phone, 10);
-        Results.annual_savings = parseInt(12 * Results.monthly_total, 10) - parseInt(12 * Results.projected_total, 10);
-      }
+          Results.projected_total = 50 + parseInt(Results.video, 10) + parseInt(Results.phone, 10);
+          Results.annual_savings = parseInt(12 * Results.monthly_total, 10) - parseInt(12 * Results.projected_total, 10);
+        }
     }
   };
 
