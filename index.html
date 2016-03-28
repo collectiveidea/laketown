@@ -18,19 +18,28 @@
       }
     table {
       width: 100%;
+      border-collapse: collapse;
     }
     th, td {
-      width: 25%;
+      padding: .5em;
       vertical-align: top;
     }
     th {
-      text-align: left;
+      text-align: right;
     }
     th[scope=row] {
       text-align: right;
     }
     td {
+      border-left: solid 1px #ccc;
       text-align: right;
+    }
+
+    tbody {
+       border-bottom: solid 1px #ccc;
+     }
+    tbody tr:nth-child(odd) {
+       background: #e7e7e7;
     }
 
     form {
@@ -82,63 +91,146 @@
   <div class="container">
     <h1>Laketown Fiber</h1>
 
-    <h2>Enter your current monthly costs <sup><a href="#bundles">*</a></sup></h2>
-    <form action="#" id="costs">
-      <fieldset>
-        <label for="internet">Internet</label>
-        $ <input type="numeric" input-method="number" name="internet" id="internet">
-      </fieldset>
-      <fieldset>
-        <label for="phone">Phone</label>
-        $ <input type="numeric" input-method="number" name="phone" id="phone">
-      </fieldset>
-      <fieldset>
-        <label for="video">Video</label>
-        $ <input type="numeric" input-method="number" name="video" id="video">
-      </fieldset>
+    <div class="phase" id="phase1">
+      <h2>Enter your current monthly costs <sup><a href="#bundles">*</a></sup></h2>
+      <form action="#phase2" id="costs">
+        <fieldset>
+          <label for="internet">Internet</label>
+          $ <input type="numeric" inputmode="number" name="internet" id="internet">
+        </fieldset>
+        <fieldset>
+          <label for="phone">Phone</label>
+          $ <input type="numeric" inputmode="number" name="phone" id="phone">
+        </fieldset>
+        <fieldset>
+          <label for="video">Video</label>
+          $ <input type="numeric" inputmode="number" name="video" id="video">
+        </fieldset>
 
 
-      <p class="total">Total: <strong id="current_monthly">$0</strong></p>
-      
-      <button type="submit">Done</button>
+        <p class="total">Total: <strong id="current_monthly">$0</strong></p>
+        
+        <button type="submit">Next &gt;</button>
 
-    </form>
-    <p class="note" id="bundles">* If you have a bundled plan including internet with phone, or video, just fill in the internet field.</p>
+      </form>
+      <p class="note" id="bundles">* If you have a bundled plan including internet with phone, or video, just fill in the internet field.</p>
+
+    </div>
+    <div class="phase" id="phase2" style="display: none";>
+      <h2>Enter your home’s taxable value<sup><a href="#tv_lookup">*</a></sup></h2>
+      <form action="#phase3" id="taxable_value">
+        <fieldset>
+          <label for="taxable_value">Taxable Value</label>
+          $ <input type="numeric" inputmode="number" name="taxable_value" id="taxable_value" value="30000">
+        </fieldset>
+        <p class="total">Monthly Fiber Tax: <strong id="fiber_tax">$4.14</strong></p>
+        <button type="submit">Next &gt;</button>
+      </form>
+      <p class="note" id="tv_lookup">* Don’t know your taxable value? No problem. You can find it by calling the township at <a href="tel:+16163353050" class="tel">(616) 335-3050</a>
+        or visiting <a href="https://allegancounty.is.bsasoftware.com/bsa.is/TaxServices/ServiceTaxSearch.aspx?i=3&appid=1&unit=380">https://allegancounty.is.bsasoftware.com/bsa.is/TaxServices/ServiceTaxSearch.aspx?i=3&appid=1&unit=380</a>.
+      </p>
+    </div>
+    <div class="phase" id="phase3" style="display: none">
+      <table>
+        <thead>
+          <tr>
+            <th>Service</th>
+            <th>Current Monthly Cost</th>
+            <th>Projected Monthly Cost</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Internet</th>
+            <td></td>
+            <td>$50</td>
+          </tr><tr>
+            <th scope="row">Phone</th>
+            <td></td>
+            <td></td>
+          </tr><tr>
+            <th scope="row">Video</th>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <th scope="row">Fiber Tax</th>
+            <td>0</td>
+            <td></td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <th scope="row">Total</th>
+            <td></td>
+            <td></td>
+          </tr>
+        <tr>
+          <th scope="row">Annual Savings</th>
+          <td></td>
+          <td></td>
+        </tfoot>
+      </table>
+    </div>
 
   </div>
 <script>
-  var costs = document.querySelectorAll('#costs input'),
+  var values = document.querySelectorAll("#costs input"),
     monthly_total = document.getElementById("current_monthly"),
+    taxable_value = document.getElementById("taxable_value"),
+    fiber_tax = document.getElementById("fiber_tax"),
+    forms = document.getElementsByTagName("form"),
     delay,
-    listen = function () {
+    addListeners = function () {
         var idx = 0;
-        while (idx < costs.length) {
-          costs[idx].addEventListener("change", compute);
-          costs[idx].addEventListener("keyup", wait);
-          costs[idx].addEventListener("keypress", procede);
-          costs[idx].addEventListener("focus", procede);
+        while (idx < values.length) {
+          listen(values[idx]);
           idx += 1;
         }
+        listen(taxable_value);
+        idx = 0;
+        while (idx < forms.length) {
+          forms[idx].addEventListener("submit", incrementPhase);
+          idx += 1;
+        }
+      }
+    listen = function (field) {
+        field.addEventListener("change", compute);
+        field.addEventListener("keyup", wait);
+        field.addEventListener("keypress", procede);
+        field.addEventListener("focus", procede);
+      },
+
+    incrementPhase = function (event) {
+        var phases = document.querySelectorAll(".phase"),
+          idx = 0;
+        event.preventDefault();
+        while(idx < phases.length) {
+          phases[idx].style.display = "none";
+          idx += 1;
+        }
+        document.querySelector(this.getAttribute("action")).style.display = "block";
       },
 
     procede = function () {
         window.clearTimeout(delay);
       },
+
     wait = function () {
       delay = window.setTimeout(compute, 500);
       },
 
     compute = function () {
       var idx = 0, total = 0;
-      while (idx < costs.length) {
-        if (costs[idx].value) {
-          total += parseInt(costs[idx].value, 10);
+      while (idx < values.length) {
+        if (values[idx].value) {
+          total += parseInt(values[idx].value, 10);
         }
         idx += 1;
       }
       monthly_total.textContent = "$" + total;
      };
-  listen();
+  addListeners()
 </script>
 </body>
 </html>
