@@ -350,7 +350,7 @@
 
           } else {
             ymax = Results.current_total;
-            projection = 300 * (50 / Results.monthly_total)
+            projection = 300 * ((Results.projected_total - Results.fiber_tax) / Results.monthly_total)
             millage = Math.round(100 * (Results.fiber_tax / Results.projected_total)) / 100;
 
             context.fillStyle = "#8C999E";
