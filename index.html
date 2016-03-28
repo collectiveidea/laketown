@@ -78,7 +78,7 @@
       color: #ccc;
       font-size: 80%;
     }
-    
+
     .total {
       font-size: 130%;
       text-align: right;
@@ -113,7 +113,7 @@
 
 
         <p class="total">Total: <strong id="current_monthly">$0</strong></p>
-        
+
         <button type="submit">Next &gt;</button>
 
       </form>
@@ -127,7 +127,7 @@
           <label for="taxable_value">Taxable Value</label>
           $ <input type="numeric" inputmode="number" name="taxable_value" id="taxable_value" value="30000">
         </fieldset>
-        <p class="total">Monthly Taxable Millage: <strong id="fiber_tax">$4.14</strong></p>
+        <p class="total">Monthly Fiber Millage: <strong id="fiber_tax">$4.14</strong></p>
         <button type="submit">Next &gt;</button>
       </form>
       <p class="note" id="tv_lookup">* Don’t know your taxable value? No problem. You can find it by calling the township at <a href="tel:+16163353050" class="tel">(616) 335-3050</a>
@@ -158,7 +158,7 @@
             <td data-name="video"></td>
           </tr>
           <tr>
-            <th scope="row">Taxed Millage</th>
+            <th scope="row">Fiber Millage</th>
             <td>$0</td>
             <td data-name="fiber_tax"></td>
           </tr>
@@ -192,7 +192,7 @@
       if (Phases[(this.getAttribute("data-phase"))].compute !== undefined) {
         Phases[(this.getAttribute("data-phase"))].compute();
       }
-      
+
       while(idx < phases.length) {
         phases[idx].style.display = "none";
         idx += 1;
@@ -330,7 +330,7 @@
             context.fillText("$" + Results.monthly_total, 0, 13);
             context.fillText("$0", 0, 300);
 
-            context.fillText("$" + Results.fiber_tax + " Taxed Millage", 340, 35);
+            context.fillText("$" + Results.fiber_tax + " Fiber Millage", 340, 35);
             context.fillText("$" + (Results.projected_total - Results.fiber_tax) + " Projected Monthly Services", 340, 75);
             context.fillText("$" + Results.monthly_total + " Current Monthly Services", 340, 115);
 
