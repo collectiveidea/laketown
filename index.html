@@ -142,39 +142,78 @@
         <tbody>
           <tr>
             <th scope="row">Internet</th>
-            <td></td>
+            <td data-name="current_internet"></td>
             <td>$50</td>
           </tr><tr>
             <th scope="row">Phone</th>
-            <td></td>
-            <td></td>
+            <td data-name="current_phone"></td>
+            <td data-name="projected_phone"></td>
           </tr><tr>
             <th scope="row">Video</th>
-            <td></td>
-            <td></td>
+            <td data-name="current_video"></td>
+            <td data-name="projected_video"></td>
           </tr>
           <tr>
             <th scope="row">Fiber Tax</th>
             <td>0</td>
-            <td></td>
+            <td data-name="fiber_tax"></td>
           </tr>
         </tbody>
         <tfoot>
           <tr>
             <th scope="row">Total</th>
-            <td></td>
-            <td></td>
+            <td data-name="current_total"></td>
+            <td data-name="projected_total"></td>
           </tr>
         <tr>
           <th scope="row">Annual Savings</th>
           <td></td>
-          <td></td>
+          <td data-name="annual_savings"></td>
         </tfoot>
       </table>
     </div>
 
   </div>
 <script>
+  IncrementPhase = function (event) {
+      var phases = document.querySelectorAll(".phase"),
+        idx = 0;
+      event.preventDefault();
+      while(idx < phases.length) {
+        phases[idx].style.display = "none";
+        idx += 1;
+      }
+      document.querySelector(this.getAttribute("action")).style.display = "block";
+      Phases[this.getAttribute("action").replace('#','')].init();
+    },
+  Results = {};
+  Phases = {
+
+    phase1 = {
+      init: function () {
+      },
+    };
+
+    phase2 = {};
+    phase3 = {
+      init: function () {
+      },
+
+      fillTable = function () {
+          var cells = document.getElementsByTagName("td"),
+            idx = 0,
+            result;
+          while (idx < cells.length) {
+            result = cells[idx].getAttribute('data-name')
+            if (result !== null) {
+              cells[idx].textContent = "$" + Results[result]
+            }
+            idx += 1;
+          }
+        },
+
+    };
+  };
   var values = document.querySelectorAll("#costs input"),
     monthly_total = document.getElementById("current_monthly"),
     taxable_value = document.getElementById("taxable_value"),
@@ -194,6 +233,7 @@
           idx += 1;
         }
       }
+
     listen = function (field) {
         field.addEventListener("change", compute);
         field.addEventListener("keyup", wait);
@@ -201,16 +241,6 @@
         field.addEventListener("focus", procede);
       },
 
-    incrementPhase = function (event) {
-        var phases = document.querySelectorAll(".phase"),
-          idx = 0;
-        event.preventDefault();
-        while(idx < phases.length) {
-          phases[idx].style.display = "none";
-          idx += 1;
-        }
-        document.querySelector(this.getAttribute("action")).style.display = "block";
-      },
 
     procede = function () {
         window.clearTimeout(delay);
@@ -225,10 +255,12 @@
       while (idx < values.length) {
         if (values[idx].value) {
           total += parseInt(values[idx].value, 10);
+          results[valus[idx].getAttribute('name')] = values[idx].value;
         }
         idx += 1;
       }
       monthly_total.textContent = "$" + total;
+      results.monthly_total = total;
      };
   addListeners()
 </script>
