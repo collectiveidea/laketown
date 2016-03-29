@@ -62,7 +62,7 @@
       background: rgba(0,0,0,0.1);
     }
     input {
-      font-size: 130%;;
+      font-size: 130%;
       font-family: inherit;
       text-align: right;
     }
@@ -130,7 +130,7 @@
           <label for="taxable_value">Taxable Value</label>
           $ <input type="numeric" inputmode="number" name="taxable_value" id="taxable_value" value="100000">
         </fieldset>
-        <p class="total">Monthly Fiber Millage: <strong id="fiber_tax">$4.14</strong></p>
+        <p class="total">Monthly Fiber Millage: <strong id="fiber_tax">$13.81</strong></p>
         <button type="submit">Next &gt;</button>
       </form>
       <p class="note" id="tv_lookup">* Don’t know your taxable value? No problem. You can find it by calling the township at <a href="tel:+16163353050" class="tel">(616) 335-3050</a>
@@ -333,39 +333,34 @@
           if (difference < 0) {
             ymax = Results.projected_total;
 
-            current = 300 * (Results.monthly_total / Results.projected_total);
-            projection = 300 * ((Results.projected_total - Results.fiber_tax) / Results.projected_total)
-            millage = 300 * (Results.fiber_tax / Results.projected_total)
+            current = 300 * (Results.monthly_total / ymax);
+            projection = 300 * ((Results.projected_total - Results.fiber_tax) / ymax)
+            millage = 300 * (Results.fiber_tax / ymax)
 
             context.fillStyle = "#8C999E";
             context.fillRect(40, 300, 80, -current);
 
-            context.fillStyle = "#296BB0";
-            context.fillRect(160, 300, 80, -(projection));
-
             context.fillStyle = "#A6D15E";
             context.fillRect(160, 300 - projection, 80, -millage);
-            context.fillStyle = "#666";
-            context.fillText("$" + Math.floor(Results.projected_total), 0, 13);
 
           } else {
-            ymax = Results.current_total;
-            projection = 300 * ((Results.projected_total - Results.fiber_tax) / Results.monthly_total)
+            ymax = Results.monthly_total;
+            projection = 300 * ((Results.projected_total - Results.fiber_tax) / ymax)
             millage = Math.round(100 * (Results.fiber_tax / Results.projected_total)) / 100;
 
             context.fillStyle = "#8C999E";
             context.fillRect(40, 300, 80, -300);
 
-            context.fillStyle = "#296BB0";
-            context.fillRect(160, 300, 80, -(projection));
-
             context.fillStyle = "#A6D15E";
             context.fillRect(160, 300 - projection, 80, -(300 * millage));
 
-            context.fillStyle = "#666";
-            context.fillText("$" + Math.floor(Results.monthly_total), 0, 13);
           }
 
+          context.fillStyle = "#296BB0";
+          context.fillRect(160, 300, 80, -(projection));
+
+          context.fillStyle = "#666";
+          context.fillText("$" + Math.floor(ymax), 0, 13);
 
         },
       total: function () {
