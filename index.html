@@ -11,6 +11,7 @@
       color: #296BB0;
     }
     sup {
+      font-size: 60%;
       line-height: 1;
     }
       sup > a {
@@ -77,6 +78,8 @@
     .note {
       color: #ccc;
       font-size: 80%;
+      text-indent: -1.1ch;
+      text-align: left;
     }
 
     .total {
@@ -99,33 +102,27 @@
     <h1>Laketown Fiber</h1>
 
     <div class="phase" id="phase1">
-      <h2>Enter your current monthly costs <sup><a href="#bundles">*</a></sup></h2>
-      <form action="#phase2" id="costs" data-phase="phase1">
+      <h2>Enter your current monthly costs<sup><a href="#bundles">1</a></sup></h2>
+      <form action="#results" id="costs" data-phase="phase1">
         <fieldset>
           <label for="internet">Internet</label>
-          $ <input type="numeric" inputmode="number" name="internet" id="internet">
+          $ <input type="numeric" inputmode="number" name="internet" id="internet" class="service" value="75">
         </fieldset>
         <fieldset>
           <label for="phone">Phone</label>
-          $ <input type="numeric" inputmode="number" name="phone" id="phone">
+          $ <input type="numeric" inputmode="number" name="phone" id="phone" class="service" value="40">
         </fieldset>
         <fieldset>
           <label for="video">Video</label>
-          $ <input type="numeric" inputmode="number" name="video" id="video">
+          $ <input type="numeric" inputmode="number" name="video" id="video" class="service">
         </fieldset>
 
 
         <p class="total">Total: <strong id="current_monthly">$0</strong></p>
 
-        <button type="submit">Next &gt;</button>
 
-      </form>
-      <p class="note" id="bundles">* If you have a bundled plan including internet with phone, or video, just fill in the internet field.</p>
 
-    </div>
-    <div class="phase" id="phase2" style="display: none";>
-      <h2>Enter your home’s taxable value<sup><a href="#tv_lookup">*</a></sup></h2>
-      <form action="#phase3" data-phase="phase2">
+      <h2>Enter your home’s taxable value<sup><a href="#tv_lookup">2</a></sup></h2>
         <fieldset>
           <label for="taxable_value">Taxable Value</label>
           $ <input type="numeric" inputmode="number" name="taxable_value" id="taxable_value" value="100000">
@@ -133,11 +130,13 @@
         <p class="total">Monthly Fiber Millage: <strong id="fiber_tax">$13.81</strong></p>
         <button type="submit">Next &gt;</button>
       </form>
-      <p class="note" id="tv_lookup">* Don’t know your taxable value? No problem. You can find it by calling the township at <a href="tel:+16163353050" class="tel">(616) 335-3050</a>
+      <p class="note" id="bundles"><sup>1</sup> If you have a bundled plan including internet with phone, or video, just fill in the internet field.</p>
+      <p class="note" id="tv_lookup"><sup>2</sup> Don’t know your taxable value? No problem. You can find it by calling the township at <a href="tel:+16163353050" class="tel">(616) 335-3050</a>
         or visiting <a href="https://allegancounty.is.bsasoftware.com/bsa.is/TaxServices/ServiceTaxSearch.aspx?i=3&appid=1&unit=380">https://allegancounty.is.bsasoftware.com/bsa.is/TaxServices/ServiceTaxSearch.aspx?i=3&appid=1&unit=380</a>.
       </p>
     </div>
-    <div class="phase" id="phase3" style="display: none">
+
+    <div class="phase" id="results" style="display: none">
       <table>
         <thead>
           <tr>
@@ -182,7 +181,7 @@
       <figure>
         <figcaption>Projected Monthly Costs</figcaption>
         <canvas id="graph" width="535" height="300"></canvas>
-      </figure
+      </figure>
 
     </div>
 
@@ -192,9 +191,9 @@
       var phases = document.querySelectorAll(".phase"),
         idx = 0;
       event.preventDefault();
-      if (Phases[(this.getAttribute("data-phase"))].compute !== undefined) {
-        Phases[(this.getAttribute("data-phase"))].compute();
-      }
+
+      Phases.phase1.computeServices();
+      Phases.phase1.computeTaxableValue();
 
       while(idx < phases.length) {
         phases[idx].style.display = "none";
@@ -206,17 +205,12 @@
 
   Results = {};
 
-  Procede = function () {
-    window.clearTimeout(window.delay);
-  };
-
-
   Phases = {
 
     phase1: {
 
       init: function () {
-        this.values = document.querySelectorAll("#costs input");
+        this.values = document.querySelectorAll("#costs .service");
         this.taxable_value = document.getElementById("taxable_value");
         this.fiber_tax = document.getElementById("fiber_tax");
         this.addListeners();
@@ -224,26 +218,37 @@
 
       addListeners: function () {
           var idx = 0,
-            values = this.values;
+            values = this.values,
+            taxable_value = this.taxable_value;
           while (idx < values.length) {
             this.listen(values[idx]);
+            values[idx].addEventListener("change", this.computeServices);
+            values[idx].addEventListener("keyup", this.waitService);
             idx += 1;
           }
           this.listen(taxable_value);
+          taxable_value.addEventListener("change", this.computeTaxableValue);
+          taxable_value.addEventListener("keyup", this.waitTax);
         },
 
       listen: function (field) {
-          field.addEventListener("change", this.compute);
-          field.addEventListener("keyup", this.wait);
-          field.addEventListener("keypress", Procede);
-          field.addEventListener("focus", Procede);
+          field.addEventListener("keypress", this.procede);
+          field.addEventListener("focus", this.procede);
         },
 
-      wait: function () {
-        window.delay = window.setTimeout(Phases.phase1.compute, 500);
+      procede: function () {
+        window.clearTimeout(window.delay);
       },
 
-      compute: function () {
+      waitService: function () {
+        window.delay = window.setTimeout(Phases.phase1.computeServices, 500);
+      },
+
+      waitTax: function () {
+        window.delay = window.setTimeout(Phases.phase1.computeTaxableValue, 500);
+      },
+
+      computeServices: function () {
         var idx = 0, total = 0, values = Phases.phase1.values,
           monthly_total = document.getElementById("current_monthly");
         while (idx < values.length) {
@@ -257,32 +262,17 @@
         }
         monthly_total.textContent = "$" + total;
         Results.monthly_total = total;
-       }
-    },
-
-    phase2: {
-      init: function () {
-        var field = document.getElementById('taxable_value');
-        field.addEventListener("change", this.compute);
-        field.addEventListener("keyup", this.wait);
-        field.addEventListener("keypress", Procede);
-        field.addEventListener("focus", Procede);
       },
 
-      wait: function () {
-        window.delay = window.setTimeout(Phases.phase2.compute, 500);
-      },
-
-      compute: function () {
+      computeTaxableValue: function () {
         var fiber_tax = document.getElementById("fiber_tax"),
-          field = document.getElementById('taxable_value');
+          field = Phases.phase1.taxable_value;
         Results.fiber_tax = (Math.round(100 * (parseInt(field.value, 10) * 0.0016572) / 12) / 100.00);
         fiber_tax.textContent = "$" + Results.fiber_tax;
       }
-
     },
 
-    phase3: {
+    results: {
       init: function () {
         this.total();
         this.fillTable();
