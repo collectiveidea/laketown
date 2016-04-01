@@ -23,7 +23,7 @@
     }
     th, td {
       padding: .5em;
-      vertical-align: top;
+      vertical-align: middle;
     }
     th {
       text-align: right;
@@ -104,21 +104,61 @@
     <div class="phase" id="phase1">
       <h2>Enter your current monthly costs<sup><a href="#bundles">1</a></sup></h2>
       <form action="#results" id="costs" data-phase="phase1">
-        <fieldset>
-          <label for="internet">Internet</label>
-          $ <input type="numeric" inputmode="number" name="internet" id="internet" class="service" value="75">
-        </fieldset>
-        <fieldset>
-          <label for="phone">Phone</label>
-          $ <input type="numeric" inputmode="number" name="phone" id="phone" class="service" value="40">
-        </fieldset>
-        <fieldset>
-          <label for="video">Video</label>
-          $ <input type="numeric" inputmode="number" name="video" id="video" class="service">
-        </fieldset>
+      <table>
+        <thead>
+          <tr>
+            <th>Service</th>
+            <th>Current Monthly Cost</th>
+            <th>Projected Monthly Cost</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">
+              <label for="internet">Internet</label>
+            </th>
+            <td data-name="internet">
+              $ <input type="numeric" size="6" inputmode="number" name="internet" id="internet" class="service" value="75">
+            </td>
+            <td>
+              $50
+              <input type="hidden" id="projected-internet" name="projected_internet" class="projection" value="50">
+            </td>
+          </tr><tr>
+            <th scope="row">
+              <label for="phone">Phone</label>
+            </th>
+            <td data-name="phone">
+            $ <input type="numeric" size="6" inputmode="number" name="phone" id="phone" class="service" value="40">
+            </td>
+            <td data-name="phone">
+            $ <input type="numeric" size="6" inputmode="number" name="projected_phone" id="projected-phone" class="projection" value="9">
+            </td>
+          </tr><tr>
+            <th scope="row">
+              <label for="video">Video</label>
+            </th>
+            <td data-name="video">
+            $ <input type="numeric" size="6" inputmode="number" name="video" id="video" class="service" value="0">
+            </td>
+            <td data-name="video">
+            $ <input type="numeric" size="6" inputmode="number" name="projected_video" id="projected-video" class="projection" value="0">
+            </td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <th scope="row" class="total">Total:</th>
+            <td>
+              <strong id="current_monthly">$115</strong>
+            </td>
+            <td>
+              <strong id="projected_monthly">$59</strong>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
 
-
-        <p class="total">Total: <strong id="current_monthly">$0</strong></p>
 
 
 
@@ -153,11 +193,11 @@
           </tr><tr>
             <th scope="row">Phone</th>
             <td data-name="phone"></td>
-            <td data-name="phone"></td>
+            <td data-name="projected_phone"></td>
           </tr><tr>
             <th scope="row">Video</th>
             <td data-name="video"></td>
-            <td data-name="video"></td>
+            <td data-name="projected_video"></td>
           </tr>
           <tr>
             <th scope="row">Fiber Millage</th>
@@ -192,8 +232,7 @@
         idx = 0;
       event.preventDefault();
 
-      Phases.phase1.computeServices();
-      Phases.phase1.computeTaxableValue();
+      Phases.phase1.computeValues();
 
       while(idx < phases.length) {
         phases[idx].style.display = "none";
@@ -211,46 +250,36 @@
 
       init: function () {
         this.values = document.querySelectorAll("#costs .service");
-        this.taxable_value = document.getElementById("taxable_value");
+        this.projections = document.querySelectorAll("#costs .projection");
+        this.taxable_value = document.querySelectorAll("#taxable_value");
         this.fiber_tax = document.getElementById("fiber_tax");
-        this.addListeners();
+        this.addListeners(this.values);
+        this.addListeners(this.projections);
+        this.addListeners(this.taxable_value);
       },
 
-      addListeners: function () {
-          var idx = 0,
-            values = this.values,
-            taxable_value = this.taxable_value;
+      addListeners: function (values) {
+          var idx = 0;
           while (idx < values.length) {
-            this.listen(values[idx]);
-            values[idx].addEventListener("change", this.computeServices);
-            values[idx].addEventListener("keyup", this.waitService);
+            values[idx].addEventListener("keypress", this.procede);
+            values[idx].addEventListener("focus", this.procede);
+            values[idx].addEventListener("change", this.computeValues);
+            values[idx].addEventListener("keyup", this.wait);
             idx += 1;
           }
-          this.listen(taxable_value);
-          taxable_value.addEventListener("change", this.computeTaxableValue);
-          taxable_value.addEventListener("keyup", this.waitTax);
-        },
-
-      listen: function (field) {
-          field.addEventListener("keypress", this.procede);
-          field.addEventListener("focus", this.procede);
         },
 
       procede: function () {
         window.clearTimeout(window.delay);
       },
 
-      waitService: function () {
-        window.delay = window.setTimeout(Phases.phase1.computeServices, 500);
+      wait: function () {
+        window.delay = window.setTimeout(Phases.phase1.computeValues, 500);
       },
 
-      waitTax: function () {
-        window.delay = window.setTimeout(Phases.phase1.computeTaxableValue, 500);
-      },
-
-      computeServices: function () {
-        var idx = 0, total = 0, values = Phases.phase1.values,
-          monthly_total = document.getElementById("current_monthly");
+      sum: function (values) {
+        var idx = 0, 
+          total = 0;
         while (idx < values.length) {
           if (values[idx].value) {
             total += parseInt(values[idx].value, 10);
@@ -260,13 +289,26 @@
           }
           idx += 1;
         }
-        monthly_total.textContent = "$" + total;
-        Results.monthly_total = total;
+        return total;
+      },
+
+      computeValues: function () {
+        var values = Phases.phase1.values,
+          projections = Phases.phase1.projections,
+          monthly_total = document.getElementById("current_monthly"),
+          monthly_projection = document.getElementById("projected_monthly");
+
+        Results.monthly_projection = Phases.phase1.sum(projections);
+        monthly_projection.textContent = "$" + Results.monthly_projection;
+        Results.monthly_total = Phases.phase1.sum(values);
+        monthly_total.textContent = "$" + Results.monthly_total;
+
+        Phases.phase1.computeTaxableValue();
       },
 
       computeTaxableValue: function () {
         var fiber_tax = document.getElementById("fiber_tax"),
-          field = Phases.phase1.taxable_value;
+          field = Phases.phase1.taxable_value[0];
         Results.fiber_tax = (Math.round(100 * (parseInt(field.value, 10) * 0.0016572) / 12) / 100.00);
         fiber_tax.textContent = "$" + Results.fiber_tax;
       }
@@ -309,7 +351,7 @@
           context.font= "normal 12px 'Ubuntu Mono', 'Roboto Mono', 'Segoe Mono', Consolas, Menlo, monospace";
           context.fillStyle = "#666";
           context.fillText("$" + Results.fiber_tax + " Fiber Millage", 340, 35);
-          context.fillText("$" + (Results.projected_total - Results.fiber_tax) + " Projected Monthly Services", 340, 75);
+          context.fillText("$" + Results.monthly_projection + " Projected Monthly Services", 340, 75);
           context.fillText("$" + Results.monthly_total + " Current Monthly Services", 340, 115);
           context.fillText("$0", 0, 300);
           context.moveTo(25, 0);
@@ -324,7 +366,7 @@
             ymax = Results.projected_total;
 
             current = 300 * (Results.monthly_total / ymax);
-            projection = 300 * ((Results.projected_total - Results.fiber_tax) / ymax)
+            projection = 300 * (Results.monthly_projection / ymax)
             millage = 300 * (Results.fiber_tax / ymax)
 
             context.fillStyle = "#8C999E";
@@ -335,7 +377,7 @@
 
           } else {
             ymax = Results.monthly_total;
-            projection = 300 * ((Results.projected_total - Results.fiber_tax) / ymax)
+            projection = 300 * (Results.monthly_projection / ymax)
             millage = Math.round(100 * (Results.fiber_tax / Results.projected_total)) / 100;
 
             context.fillStyle = "#8C999E";
