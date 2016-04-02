@@ -100,14 +100,14 @@
     <h1>Laketown Fiber</h1>
 
     <div class="phase" id="phase1">
-      <h2>Enter your current monthly costs<sup><a href="#bundles">1</a></sup></h2>
+      <h2>Enter your monthly costs<sup><a href="#bundles">1</a></sup></h2>
       <form action="#results" id="costs" data-phase="phase1">
       <table>
         <thead>
           <tr>
             <th>Service</th>
             <th>Current Monthly Cost</th>
-            <th>Projected Monthly Cost</th>
+            <th>Future Monthly Cost</th>
           </tr>
         </thead>
         <tbody>
@@ -181,7 +181,7 @@
           <tr>
             <th>Service</th>
             <th>Current Monthly Cost</th>
-            <th>Projected Monthly Cost</th>
+            <th>Future Monthly Cost</th>
           </tr>
         </thead>
         <tbody>
@@ -218,7 +218,7 @@
       </table>
 
       <figure>
-        <figcaption>Projected Monthly Costs</figcaption>
+        <figcaption>Future Monthly Costs</figcaption>
         <canvas id="graph" width="535" height="300"></canvas>
       </figure>
 
@@ -350,7 +350,7 @@
           context.font= "normal 12px 'Ubuntu Mono', 'Roboto Mono', 'Segoe Mono', Consolas, Menlo, monospace";
           context.fillStyle = "#666";
           context.fillText("$" + Results.fiber_tax + " Fiber Millage", 340, 35);
-          context.fillText("$" + Results.monthly_projection + " Projected Monthly Services", 340, 75);
+          context.fillText("$" + Results.monthly_projection + " Future Monthly Services", 340, 75);
           context.fillText("$" + Results.monthly_total + " Current Monthly Services", 340, 115);
           context.fillText("$0", 0, 300);
           context.moveTo(25, 0);
