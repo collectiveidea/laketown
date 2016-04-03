@@ -1,0 +1,22 @@
+{
+  "name": "laketown",
+  "version": "1.0.0",
+  "description": "Laketown Calculator",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/collectiveidea/laketown.git"
+  },
+  "keywords": [],
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/collectiveidea/laketown/issues"
+  },
+  "homepage": "https://github.com/collectiveidea/laketown",
+  "devDependencies": {
+    "casperjs": "^1.1.0-beta4"
+  }
+}
