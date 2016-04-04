@@ -350,7 +350,7 @@
     },
 
     graph: function () {
-        var ymax, graph = document.getElementById("graph"), 
+        var ymax, graph = document.getElementById("graph"),
           context = graph.getContext("2d"),
           difference = Results.monthly_total - Results.projected_total,
           projection, savings;
@@ -362,9 +362,9 @@
         context.fillRect(310, 20, 20, 20);
         context.font= "normal 12px 'Ubuntu Mono', 'Roboto Mono', 'Segoe Mono', Consolas, Menlo, monospace";
         context.fillStyle = "#666";
-        context.fillText("$" + Results.fiber_tax + " Fiber Millage", 340, 35);
-        context.fillText("$" + Results.monthly_projection + " Future Monthly Services", 340, 75);
-        context.fillText("$" + Results.monthly_total + " Current Monthly Services", 340, 115);
+        context.fillText("$" + this.formatCurrency(Results.fiber_tax) + " Fiber Millage", 340, 35);
+        context.fillText("$" + this.formatCurrency(Results.monthly_projection) + " Future Monthly Services", 340, 75);
+        context.fillText("$" + this.formatCurrency(Results.monthly_total) + " Current Monthly Services", 340, 115);
         context.fillText("$0", 0, 300);
         context.moveTo(25, 0);
         context.lineTo(30.5, 0);
