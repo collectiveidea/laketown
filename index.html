@@ -338,7 +338,8 @@
         },
 
       graph: function () {
-          var ymax, graph = document.getElementById("graph"), context = graph.getContext("2d"),
+          var ymax, graph = document.getElementById("graph"), 
+            context = graph.getContext("2d"),
             difference = Results.monthly_total - Results.projected_total,
             projection, savings;
           context.fillStyle = "#8C999E";
@@ -395,8 +396,10 @@
 
         },
       total: function () {
-          Results.projected_total = 50 + parseInt(Results.video, 10) + parseInt(Results.phone, 10) + parseFloat(Results.fiber_tax);
-          Results.annual_savings = parseInt(12 * Results.monthly_total, 10) - parseInt(12 * Results.projected_total, 10);
+          Results.projected_total = parseFloat(Results.monthly_projection) + parseFloat(Results.fiber_tax);
+          Results.projected_total = Math.round(Results.projected_total * 100) / 100;
+          Results.annual_savings = parseFloat(12 * Results.monthly_total) - parseFloat(12 * Results.projected_total);
+          Results.annual_savings = Math.round(Results.annual_savings * 100) / 100;
         }
     }
   };
