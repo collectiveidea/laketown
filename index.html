@@ -222,10 +222,15 @@
         <canvas id="graph" width="535" height="300"></canvas>
       </figure>
 
+      <input type="range" min="25" max="40" value="40" id="slider">
+
     </div>
 
   </div>
 <script>
+  INTERNET_MIN = 25;
+  INTERNET_MAX = 40;
+
   IncrementPhase = function (event) {
       var phases = document.querySelectorAll(".phase"),
         idx = 0;
@@ -318,12 +323,13 @@
         this.total();
         this.fillTable();
         this.graph();
+        document.getElementById('slider').addEventListener("change", Phases.results.updateProjection);
       },
 
-    fillTable: function () {
-        var cells = document.getElementsByTagName("td"),
-          idx = 0,
-          result;
+      fillTable: function () {
+          var cells = document.getElementsByTagName("td"),
+            idx = 0,
+            result;
         while (idx < cells.length) {
           if (cells[idx].hasAttribute('data-name')) {
             result = cells[idx].getAttribute('data-name')
@@ -337,83 +343,117 @@
         }
       },
 
-    formatCurrency: function(val) {
-      var val = val.toString(),
-        pattern = /^\d+\.(\d{1,2})$/,
-        precision = pattern.exec(val);
-      if (precision !== null && precision.length === 2) {
-        if (precision[1].length === 1) {
-          return val + "0";
+      formatCurrency: function(val) {
+        var val = val.toString(),
+          pattern = /^\d+\.(\d{1,2})$/,
+          precision = pattern.exec(val);
+        if (precision !== null && precision.length === 2) {
+          if (precision[1].length === 1) {
+            return val + "0";
+          }
         }
-      }
-      return val;
-    },
+        return val;
+      },
 
-    graph: function () {
-        var ymax, graph = document.getElementById("graph"),
+      updateProjection: function (event) {
+        var projected_total = (Results.projected_total - Results.projected_internet + parseInt(this.value, 10)),
+          monthly_projection = projected_total - Results.fiber_tax;
+
+        document.getElementById('projected-internet').value = this.value;
+        Phases.phase1.computeValues();
+        Phases.results.total();
+        Phases.results.fillTable();
+        Phases.results.graph();
+      },
+
+      graph: function () {
+        var graph = document.getElementById("graph"),
           context = graph.getContext("2d"),
-          difference = Results.monthly_total - Results.projected_total,
-          projection, savings;
-        context.fillStyle = "#8C999E";
-        context.fillRect(310, 100, 20, 20);
-        context.fillStyle = "#296BB0";
-        context.fillRect(310, 60, 20, 20);
-        context.fillStyle = "#A6D15E";
-        context.fillRect(310, 20, 20, 20);
-        context.font= "normal 12px 'Ubuntu Mono', 'Roboto Mono', 'Segoe Mono', Consolas, Menlo, monospace";
-        context.fillStyle = "#666";
-        context.fillText("$" + this.formatCurrency(Results.fiber_tax) + " Fiber Millage", 340, 35);
-        context.fillText("$" + this.formatCurrency(Results.monthly_projection) + " Future Monthly Services", 340, 75);
-        context.fillText("$" + this.formatCurrency(Results.monthly_total) + " Current Monthly Services", 340, 115);
-        context.fillText("$0", 0, 300);
-        context.moveTo(25, 0);
-        context.lineTo(30.5, 0);
-        context.lineTo(30.5, 300);
-        context.moveTo(25, 300);
-        context.lineTo(300, 300);
-        context.strokeStyle = "#ccc";
-        context.stroke();
+          current,
+          projection,
+          projectionRect,
+          millage,
+          currentRect,
+          millageRect,
+          ymax,
+          startTime,
 
-        if (difference < 0) {
-          ymax = Results.projected_total;
 
-          current = 300 * (Results.monthly_total / ymax);
-          projection = 300 * (Results.monthly_projection / ymax)
-          millage = 300 * (Results.fiber_tax / ymax)
+          drawLegend = function (formatCurrency) {
+            context.fillStyle = "#8C999E";
+            context.fillRect(310, 100, 20, 20);
+            context.fillStyle = "#296BB0";
+            context.fillRect(310, 60, 20, 20);
+            context.fillStyle = "#A6D15E";
+            context.fillRect(310, 20, 20, 20);
+            context.font= "normal 12px 'Ubuntu Mono', 'Roboto Mono', 'Segoe Mono', Consolas, Menlo, monospace";
+            context.fillStyle = "#666";
+            context.fillText("$" + formatCurrency(Results.fiber_tax) + " Fiber Millage", 340, 35);
+            context.fillText("$" + formatCurrency(Results.monthly_projection) + " Future Monthly Services", 340, 75);
+            context.fillText("$" + formatCurrency(Results.monthly_total) + " Current Monthly Services", 340, 115);
+          },
+          drawAxis = function () {
+            context.fillStyle = "#666";
+            context.fillText("$0", 0, 300);
+            context.moveTo(25, 0);
+            context.lineTo(30.5, 0);
+            context.lineTo(30.5, 300);
+            context.moveTo(25, 300);
+            context.lineTo(300, 300);
+            context.strokeStyle = "#ccc";
+            context.stroke();
+            context.fillText("$" + Math.floor(ymax), 0, 13);
+          },
 
-          context.fillStyle = "#8C999E";
-          context.fillRect(40, 300, 80, -current);
+          measureRects = function (difference, monthly_projection, projected_total) {
+            if (difference < 0) {
+              ymax = Results.projected_total;
 
-          context.fillStyle = "#A6D15E";
-          context.fillRect(160, 300 - projection, 80, -millage);
+              current = 300 * (Results.monthly_total / ymax);
+              projection = 300 * (monthly_projection / ymax)
+              millage = 300 * (Results.fiber_tax / ymax)
 
-        } else {
-          ymax = Results.monthly_total;
-          projection = 300 * (Results.monthly_projection / ymax)
-          millage = Math.round(100 * (Results.fiber_tax / Results.projected_total)) / 100;
+              currentRect = {x: 40, y: 300, w: 80, h: -current};
+              millageRect = {x: 160, y: 300 - projection, w: 80, h: -millage};
 
-          context.fillStyle = "#8C999E";
-          context.fillRect(40, 300, 80, -300);
+            } else {
+              ymax = Results.monthly_total;
+              projection = 300 * (monthly_projection / ymax)
+              millage = Results.fiber_tax / ymax;
 
-          context.fillStyle = "#A6D15E";
-          context.fillRect(160, 300 - projection, 80, -(300 * millage));
+              currentRect = {x: 40, y: 300, w: 80, h: -300};
+              millageRect = {x: 160, y: 300 - projection, w: 80, h: -(300 * millage)};
 
-        }
+            }
+            projectionRect = {x: 160, y: 300, w: 80, h: -(projection)};
 
-        context.fillStyle = "#296BB0";
-        context.fillRect(160, 300, 80, -(projection));
+            drawRectangle(currentRect, context, "#8c999e");
+            drawRectangle(millageRect, context, "#a6d15e");
+            drawRectangle(projectionRect, context, "#296BB0");
+          };
 
-        context.fillStyle = "#666";
-        context.fillText("$" + Math.floor(ymax), 0, 13);
+        context.clearRect(0,0,535,300);
+        measureRects(Results.monthly_total - Results.projected_total, Results.monthly_projection, Results.projected_total);
+
+        drawLegend(this.formatCurrency);
+        drawAxis(ymax);
+
 
       },
-    total: function () {
+
+      total: function () {
         Results.projected_total = parseFloat(Results.monthly_projection) + parseFloat(Results.fiber_tax);
         Results.projected_total = this.formatCurrency(Math.round(Results.projected_total * 100) / 100);
         Results.annual_savings = parseFloat(12 * Results.monthly_total) - parseFloat(12 * Results.projected_total);
         Results.annual_savings = this.formatCurrency(Math.round(Results.annual_savings * 100) / 100);
       }
     }
+  };
+
+
+  drawRectangle = function (myRectangle, context, color) {
+    context.fillStyle = color;
+    context.fillRect(myRectangle.x, myRectangle.y, myRectangle.w, myRectangle.h);
   };
 
 
