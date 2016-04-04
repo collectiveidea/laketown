@@ -107,3 +107,29 @@ casper.test.begin("Properly rounds to two decimals", 4, function suite(test) {
     test.done();
   });
 });
+
+casper.test.begin("Works with non-numbers", 4, function suite(test) {
+
+  casper.start(page, function() {
+    this.fill('form', {
+      video: "",
+      phone: "",
+      internet: "",
+      projected_video: "",
+      projected_phone: "",
+      projected_internet: "",
+      taxable_value: ""
+    }, true);
+  });
+
+  casper.then(function() {
+    test.assertSelectorHasText('td[data-name="monthly_total"]', '$0');
+    test.assertSelectorHasText('td[data-name="projected_total"]', '$0');
+    test.assertSelectorHasText('td[data-name="fiber_tax"]', '$0');
+    test.assertSelectorHasText('td[data-name="annual_savings"]', '$0');
+  });
+
+  casper.run(function() {
+    test.done();
+  });
+});

@@ -281,7 +281,7 @@
           total = 0;
         while (idx < values.length) {
           if (values[idx].value) {
-            total += parseInt(values[idx].value, 10);
+            total += parseInt(+values[idx].value, 10);
             Results[values[idx].getAttribute('name')] = values[idx].value;
           } else {
             Results[values[idx].getAttribute('name')] = 0;
@@ -308,7 +308,7 @@
       computeTaxableValue: function () {
         var fiber_tax = document.getElementById("fiber_tax"),
           field = Phases.phase1.taxable_value[0];
-        Results.fiber_tax = (Math.round(100 * (parseInt(field.value, 10) * 0.0016572) / 12) / 100.00);
+        Results.fiber_tax = (Math.round(100 * (parseInt(+field.value, 10) * 0.0016572) / 12) / 100.00);
         fiber_tax.textContent = "$" + Results.fiber_tax;
       }
     },
