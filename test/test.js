@@ -65,3 +65,45 @@ casper.test.begin("Math works when increasing taxable value", 4, function suite(
     test.done();
   });
 });
+
+casper.test.begin("Math works when decreasing taxable value", 4, function suite(test) {
+
+  casper.start(page, function() {
+    this.fill('form', {
+      taxable_value: "50000"
+    }, true);
+  });
+
+  casper.then(function() {
+    test.assertSelectorHasText('td[data-name="monthly_total"]', '$115');
+    test.assertSelectorHasText('td[data-name="projected_total"]', '$65.91');
+    test.assertSelectorHasText('td[data-name="fiber_tax"]', '$6.91');
+    test.assertSelectorHasText('td[data-name="annual_savings"]', '$589.08');
+  });
+
+  casper.run(function() {
+    test.done();
+  });
+});
+
+
+casper.test.begin("Properly rounds to two decimals", 4, function suite(test) {
+
+  casper.start(page, function() {
+    this.fill('form', {
+      projected_video: "30",
+      taxable_value: "55000"
+    }, true);
+  });
+
+  casper.then(function() {
+    test.assertSelectorHasText('td[data-name="monthly_total"]', '$115');
+    test.assertSelectorHasText('td[data-name="projected_total"]', '$96.60');
+    test.assertSelectorHasText('td[data-name="fiber_tax"]', '$7.60');
+    test.assertSelectorHasText('td[data-name="annual_savings"]', '$220.80');
+  });
+
+  casper.run(function() {
+    test.done();
+  });
+});
