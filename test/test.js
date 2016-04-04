@@ -11,7 +11,7 @@ casper.test.begin("Basic page", 1, function suite(test) {
   });
 });
 
-casper.test.begin("Math works with default values", 11, function suite(test) {
+casper.test.begin("Math works with default values", 12, function suite(test) {
 
   casper.start(page, function() {
     // current
@@ -34,6 +34,7 @@ casper.test.begin("Math works with default values", 11, function suite(test) {
   });
 
   casper.then(function() {
+    test.assertSelectorHasText('td[data-name="projected_internet"]', '$40');
     test.assertSelectorHasText('td[data-name="monthly_total"]', '$115');
     test.assertSelectorHasText('td[data-name="projected_total"]', '$62.81');
     test.assertSelectorHasText('td[data-name="fiber_tax"]', '$13.81');
