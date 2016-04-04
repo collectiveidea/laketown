@@ -5,7 +5,7 @@
 Install casperjs
 
 ```bash
-brew "casperjs" --devel
+brew install casperjs --devel
 ```
 
 Run the tests
