@@ -38,6 +38,9 @@
       border-left: solid 1px #ccc;
       text-align: right;
     }
+    #results .projected-internet {
+      border-left: none;
+    }
 
     tbody {
        border-bottom: solid 1px #ccc;
@@ -181,39 +184,42 @@
           <tr>
             <th>Service</th>
             <th>Current Monthly Cost</th>
-            <th>Future Monthly Cost</th>
+            <th colspan="2">Future Monthly Cost</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <th scope="row">Internet</th>
             <td data-name="internet"></td>
-            <td data-name="projected_internet">$32</td>
+            <td>
+              <input type="range" min="25" max="40" value="32" id="slider">
+            </td>
+            <td data-name="projected_internet" class="projected-internet">$32</td>
           </tr><tr>
             <th scope="row">Phone</th>
             <td data-name="phone"></td>
-            <td data-name="projected_phone"></td>
+            <td data-name="projected_phone" colspan="2"></td>
           </tr><tr>
             <th scope="row">Video</th>
             <td data-name="video"></td>
-            <td data-name="projected_video"></td>
+            <td data-name="projected_video" colspan="2"></td>
           </tr>
           <tr>
             <th scope="row">Fiber Millage</th>
             <td>$0</td>
-            <td data-name="fiber_tax"></td>
+            <td data-name="fiber_tax" colspan="2"></td>
           </tr>
         </tbody>
         <tfoot>
           <tr>
             <th scope="row">Total</th>
             <td data-name="monthly_total"></td>
-            <td data-name="projected_total"></td>
+            <td data-name="projected_total" colspan="2"></td>
           </tr>
         <tr>
           <th scope="row">Annual Savings</th>
           <td></td>
-          <td data-name="annual_savings"></td>
+          <td data-name="annual_savings" colspan="2"></td>
         </tfoot>
       </table>
 
@@ -221,8 +227,6 @@
         <figcaption>Future Monthly Costs</figcaption>
         <canvas id="graph" width="535" height="300"></canvas>
       </figure>
-
-      <input type="range" min="25" max="40" value="32" id="slider">
 
     </div>
 
