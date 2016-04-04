@@ -320,87 +320,99 @@
         this.graph();
       },
 
-      fillTable: function () {
-          var cells = document.getElementsByTagName("td"),
-            idx = 0,
-            result;
-          while (idx < cells.length) {
-            if (cells[idx].hasAttribute('data-name')) {
-              result = cells[idx].getAttribute('data-name')
-              if (result !== undefined) {
-                cells[idx].textContent = "$" + Results[result];
-              } else {
-                cells[idx].textContent = "$0";
-              }
+    fillTable: function () {
+        var cells = document.getElementsByTagName("td"),
+          idx = 0,
+          result;
+        while (idx < cells.length) {
+          if (cells[idx].hasAttribute('data-name')) {
+            result = cells[idx].getAttribute('data-name')
+            if (result !== undefined) {
+              cells[idx].textContent = "$" + this.formatCurrency(Results[result]);
+            } else {
+              cells[idx].textContent = "$0";
             }
-            idx += 1;
           }
-        },
-
-      graph: function () {
-          var ymax, graph = document.getElementById("graph"), 
-            context = graph.getContext("2d"),
-            difference = Results.monthly_total - Results.projected_total,
-            projection, savings;
-          context.fillStyle = "#8C999E";
-          context.fillRect(310, 100, 20, 20);
-          context.fillStyle = "#296BB0";
-          context.fillRect(310, 60, 20, 20);
-          context.fillStyle = "#A6D15E";
-          context.fillRect(310, 20, 20, 20);
-          context.font= "normal 12px 'Ubuntu Mono', 'Roboto Mono', 'Segoe Mono', Consolas, Menlo, monospace";
-          context.fillStyle = "#666";
-          context.fillText("$" + Results.fiber_tax + " Fiber Millage", 340, 35);
-          context.fillText("$" + Results.monthly_projection + " Future Monthly Services", 340, 75);
-          context.fillText("$" + Results.monthly_total + " Current Monthly Services", 340, 115);
-          context.fillText("$0", 0, 300);
-          context.moveTo(25, 0);
-          context.lineTo(30.5, 0);
-          context.lineTo(30.5, 300);
-          context.moveTo(25, 300);
-          context.lineTo(300, 300);
-          context.strokeStyle = "#ccc";
-          context.stroke();
-
-          if (difference < 0) {
-            ymax = Results.projected_total;
-
-            current = 300 * (Results.monthly_total / ymax);
-            projection = 300 * (Results.monthly_projection / ymax)
-            millage = 300 * (Results.fiber_tax / ymax)
-
-            context.fillStyle = "#8C999E";
-            context.fillRect(40, 300, 80, -current);
-
-            context.fillStyle = "#A6D15E";
-            context.fillRect(160, 300 - projection, 80, -millage);
-
-          } else {
-            ymax = Results.monthly_total;
-            projection = 300 * (Results.monthly_projection / ymax)
-            millage = Math.round(100 * (Results.fiber_tax / Results.projected_total)) / 100;
-
-            context.fillStyle = "#8C999E";
-            context.fillRect(40, 300, 80, -300);
-
-            context.fillStyle = "#A6D15E";
-            context.fillRect(160, 300 - projection, 80, -(300 * millage));
-
-          }
-
-          context.fillStyle = "#296BB0";
-          context.fillRect(160, 300, 80, -(projection));
-
-          context.fillStyle = "#666";
-          context.fillText("$" + Math.floor(ymax), 0, 13);
-
-        },
-      total: function () {
-          Results.projected_total = parseFloat(Results.monthly_projection) + parseFloat(Results.fiber_tax);
-          Results.projected_total = Math.round(Results.projected_total * 100) / 100;
-          Results.annual_savings = parseFloat(12 * Results.monthly_total) - parseFloat(12 * Results.projected_total);
-          Results.annual_savings = Math.round(Results.annual_savings * 100) / 100;
+          idx += 1;
         }
+      },
+
+    formatCurrency: function(val) {
+      var val = val.toString(),
+        pattern = /^\d+\.(\d{1,2})$/,
+        precision = pattern.exec(val);
+      if (precision !== null && precision.length === 2) {
+        if (precision[1].length === 1) {
+          return val + "0";
+        }
+      }
+      return val;
+    },
+
+    graph: function () {
+        var ymax, graph = document.getElementById("graph"), 
+          context = graph.getContext("2d"),
+          difference = Results.monthly_total - Results.projected_total,
+          projection, savings;
+        context.fillStyle = "#8C999E";
+        context.fillRect(310, 100, 20, 20);
+        context.fillStyle = "#296BB0";
+        context.fillRect(310, 60, 20, 20);
+        context.fillStyle = "#A6D15E";
+        context.fillRect(310, 20, 20, 20);
+        context.font= "normal 12px 'Ubuntu Mono', 'Roboto Mono', 'Segoe Mono', Consolas, Menlo, monospace";
+        context.fillStyle = "#666";
+        context.fillText("$" + Results.fiber_tax + " Fiber Millage", 340, 35);
+        context.fillText("$" + Results.monthly_projection + " Future Monthly Services", 340, 75);
+        context.fillText("$" + Results.monthly_total + " Current Monthly Services", 340, 115);
+        context.fillText("$0", 0, 300);
+        context.moveTo(25, 0);
+        context.lineTo(30.5, 0);
+        context.lineTo(30.5, 300);
+        context.moveTo(25, 300);
+        context.lineTo(300, 300);
+        context.strokeStyle = "#ccc";
+        context.stroke();
+
+        if (difference < 0) {
+          ymax = Results.projected_total;
+
+          current = 300 * (Results.monthly_total / ymax);
+          projection = 300 * (Results.monthly_projection / ymax)
+          millage = 300 * (Results.fiber_tax / ymax)
+
+          context.fillStyle = "#8C999E";
+          context.fillRect(40, 300, 80, -current);
+
+          context.fillStyle = "#A6D15E";
+          context.fillRect(160, 300 - projection, 80, -millage);
+
+        } else {
+          ymax = Results.monthly_total;
+          projection = 300 * (Results.monthly_projection / ymax)
+          millage = Math.round(100 * (Results.fiber_tax / Results.projected_total)) / 100;
+
+          context.fillStyle = "#8C999E";
+          context.fillRect(40, 300, 80, -300);
+
+          context.fillStyle = "#A6D15E";
+          context.fillRect(160, 300 - projection, 80, -(300 * millage));
+
+        }
+
+        context.fillStyle = "#296BB0";
+        context.fillRect(160, 300, 80, -(projection));
+
+        context.fillStyle = "#666";
+        context.fillText("$" + Math.floor(ymax), 0, 13);
+
+      },
+    total: function () {
+        Results.projected_total = parseFloat(Results.monthly_projection) + parseFloat(Results.fiber_tax);
+        Results.projected_total = this.formatCurrency(Math.round(Results.projected_total * 100) / 100);
+        Results.annual_savings = parseFloat(12 * Results.monthly_total) - parseFloat(12 * Results.projected_total);
+        Results.annual_savings = this.formatCurrency(Math.round(Results.annual_savings * 100) / 100);
+      }
     }
   };
 
