@@ -324,6 +324,7 @@
         this.fillTable();
         this.graph();
         document.getElementById('slider').addEventListener("change", Phases.results.updateProjection);
+        document.getElementById('slider').addEventListener("input", Phases.results.updateProjection);
       },
 
       fillTable: function () {
