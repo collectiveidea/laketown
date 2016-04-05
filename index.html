@@ -230,227 +230,222 @@
 
   </div>
 <script>
-  INTERNET_MIN = 25;
-  INTERNET_MAX = 40;
-
-  IncrementPhase = function (event) {
-      var phases = document.querySelectorAll(".phase"),
-        idx = 0;
-      event.preventDefault();
-
-      Phases.phase1.computeValues();
-
-      while(idx < phases.length) {
-        phases[idx].style.display = "none";
-        idx += 1;
-      }
-      document.querySelector(this.getAttribute("action")).style.display = "block";
-      Phases[(this.getAttribute("action").replace('#',''))].init();
-    };
-
   Results = {};
 
-  Phases = {
+  Phase1 = {
 
-    phase1: {
+    init: function () {
+      this.values = document.querySelectorAll("#costs .service");
+      this.projections = document.querySelectorAll("#costs .projection");
+      this.taxable_value = document.querySelectorAll("#taxable_value");
+      this.fiber_tax = document.getElementById("fiber_tax");
+      this.addListeners(this.values);
+      this.addListeners(this.projections);
+      this.addListeners(this.taxable_value);
 
-      init: function () {
-        this.values = document.querySelectorAll("#costs .service");
-        this.projections = document.querySelectorAll("#costs .projection");
-        this.taxable_value = document.querySelectorAll("#taxable_value");
-        this.fiber_tax = document.getElementById("fiber_tax");
-        this.addListeners(this.values);
-        this.addListeners(this.projections);
-        this.addListeners(this.taxable_value);
-      },
+      document.getElementById('costs').addEventListener("submit", function (event) {
+          var phases = document.querySelectorAll(".phase"),
+            idx = 0;
+          event.preventDefault();
 
-      addListeners: function (values) {
-          var idx = 0;
-          while (idx < values.length) {
-            values[idx].addEventListener("keypress", this.procede);
-            values[idx].addEventListener("focus", this.procede);
-            values[idx].addEventListener("change", this.computeValues);
-            values[idx].addEventListener("keyup", this.wait);
+          Phase1.computeValues();
+
+          while(idx < phases.length) {
+            phases[idx].style.display = "none";
             idx += 1;
           }
-        },
+          document.querySelector(this.getAttribute("action")).style.display = "block";
+          Response.init();
+        });
 
-      procede: function () {
-        window.clearTimeout(window.delay);
-      },
+    },
 
-      wait: function () {
-        window.delay = window.setTimeout(Phases.phase1.computeValues, 500);
-      },
-
-      sum: function (values) {
-        var idx = 0,
-          total = 0;
+    addListeners: function (values) {
+        var idx = 0;
         while (idx < values.length) {
-          if (values[idx].value) {
-            total += parseInt(+values[idx].value, 10);
-            Results[values[idx].getAttribute('name')] = values[idx].value;
-          } else {
-            Results[values[idx].getAttribute('name')] = 0;
-          }
+          values[idx].addEventListener("keypress", this.procede);
+          values[idx].addEventListener("focus", this.procede);
+          values[idx].addEventListener("change", this.computeValues);
+          values[idx].addEventListener("keyup", this.wait);
           idx += 1;
         }
-        return total;
       },
 
-      computeValues: function () {
-        var values = Phases.phase1.values,
-          projections = Phases.phase1.projections,
-          monthly_total = document.getElementById("current_monthly"),
-          monthly_projection = document.getElementById("projected_monthly");
+    procede: function () {
+      window.clearTimeout(window.delay);
+    },
 
-        Results.monthly_projection = Phases.phase1.sum(projections);
-        monthly_projection.textContent = "$" + Results.monthly_projection;
-        Results.monthly_total = Phases.phase1.sum(values);
-        monthly_total.textContent = "$" + Results.monthly_total;
+    wait: function () {
+      window.delay = window.setTimeout(Phase1.computeValues, 500);
+    },
 
-        Phases.phase1.computeTaxableValue();
-      },
+    sum: function (values) {
+      var idx = 0,
+        total = 0;
+      while (idx < values.length) {
+        if (values[idx].value) {
+          total += parseInt(+values[idx].value, 10);
+          Results[values[idx].getAttribute('name')] = values[idx].value;
+        } else {
+          Results[values[idx].getAttribute('name')] = 0;
+        }
+        idx += 1;
+      }
+      return total;
+    },
 
-      computeTaxableValue: function () {
-        var fiber_tax = document.getElementById("fiber_tax"),
-          field = Phases.phase1.taxable_value[0];
-        Results.fiber_tax = (Math.round(100 * (parseInt(+field.value, 10) * 0.0016572) / 12) / 100.00);
-        fiber_tax.textContent = "$" + Results.fiber_tax;
+    computeValues: function () {
+      var values = Phase1.values,
+        projections = Phase1.projections,
+        monthly_total = document.getElementById("current_monthly"),
+        monthly_projection = document.getElementById("projected_monthly");
+
+      Results.monthly_projection = Phase1.sum(projections);
+      monthly_projection.textContent = "$" + Results.monthly_projection;
+      Results.monthly_total = Phase1.sum(values);
+      monthly_total.textContent = "$" + Results.monthly_total;
+
+      Phase1.computeTaxableValue();
+    },
+
+    computeTaxableValue: function () {
+      var fiber_tax = document.getElementById("fiber_tax"),
+        field = Phase1.taxable_value[0];
+      Results.fiber_tax = (Math.round(100 * (parseInt(+field.value, 10) * 0.0016572) / 12) / 100.00);
+      fiber_tax.textContent = "$" + Results.fiber_tax;
+    }
+  };
+
+  Response = {
+    init: function () {
+      this.total();
+      this.fillTable();
+      this.graph();
+      document.getElementById('slider').addEventListener("change", Response.updateProjection);
+      document.getElementById('slider').addEventListener("input", Response.updateProjection);
+    },
+
+    fillTable: function () {
+        var cells = document.getElementsByTagName("td"),
+          idx = 0,
+          result;
+      while (idx < cells.length) {
+        var element = cells[idx].getElementsByTagName("span")[0]
+        if (element && element.hasAttribute('data-name')) {
+          result = element.getAttribute('data-name')
+          if (result !== undefined) {
+            element.textContent = "$" + this.formatCurrency(Results[result]);
+          } else {
+            element.textContent = "$0";
+          }
+        }
+        idx += 1;
       }
     },
 
-    results: {
-      init: function () {
-        this.total();
-        this.fillTable();
-        this.graph();
-        document.getElementById('slider').addEventListener("change", Phases.results.updateProjection);
-        document.getElementById('slider').addEventListener("input", Phases.results.updateProjection);
-      },
-
-      fillTable: function () {
-          var cells = document.getElementsByTagName("td"),
-            idx = 0,
-            result;
-        while (idx < cells.length) {
-          var element = cells[idx].getElementsByTagName("span")[0]
-          if (element && element.hasAttribute('data-name')) {
-            result = element.getAttribute('data-name')
-            if (result !== undefined) {
-              element.textContent = "$" + this.formatCurrency(Results[result]);
-            } else {
-              element.textContent = "$0";
-            }
-          }
-          idx += 1;
+    formatCurrency: function(val) {
+      var val = val.toString(),
+        pattern = /^\d+\.(\d{1,2})$/,
+        precision = pattern.exec(val);
+      if (precision !== null && precision.length === 2) {
+        if (precision[1].length === 1) {
+          return val + "0";
         }
-      },
-
-      formatCurrency: function(val) {
-        var val = val.toString(),
-          pattern = /^\d+\.(\d{1,2})$/,
-          precision = pattern.exec(val);
-        if (precision !== null && precision.length === 2) {
-          if (precision[1].length === 1) {
-            return val + "0";
-          }
-        }
-        return val;
-      },
-
-      updateProjection: function (event) {
-        var projected_total = (Results.projected_total - Results.projected_internet + parseInt(this.value, 10)),
-          monthly_projection = projected_total - Results.fiber_tax;
-
-        document.getElementById('projected-internet').value = this.value;
-        Phases.phase1.computeValues();
-        Phases.results.total();
-        Phases.results.fillTable();
-        Phases.results.graph();
-      },
-
-      graph: function () {
-        var graph = document.getElementById("graph"),
-          context = graph.getContext("2d"),
-          current,
-          projection,
-          projectionRect,
-          millage,
-          currentRect,
-          millageRect,
-          ymax,
-          startTime,
-
-
-          drawLegend = function (formatCurrency) {
-            context.fillStyle = "#8C999E";
-            context.fillRect(310, 100, 20, 20);
-            context.fillStyle = "#296BB0";
-            context.fillRect(310, 60, 20, 20);
-            context.fillStyle = "#A6D15E";
-            context.fillRect(310, 20, 20, 20);
-            context.font= "normal 12px 'Ubuntu Mono', 'Roboto Mono', 'Segoe Mono', Consolas, Menlo, monospace";
-            context.fillStyle = "#666";
-            context.fillText("$" + formatCurrency(Results.fiber_tax) + " Fiber Millage", 340, 35);
-            context.fillText("$" + formatCurrency(Results.monthly_projection) + " Future Monthly Services", 340, 75);
-            context.fillText("$" + formatCurrency(Results.monthly_total) + " Current Monthly Services", 340, 115);
-          },
-          drawAxis = function () {
-            context.fillStyle = "#666";
-            context.fillText("$0", 0, 300);
-            context.moveTo(25, 0);
-            context.lineTo(30.5, 0);
-            context.lineTo(30.5, 300);
-            context.moveTo(25, 300);
-            context.lineTo(300, 300);
-            context.strokeStyle = "#ccc";
-            context.stroke();
-            context.fillText("$" + Math.floor(ymax), 0, 13);
-          },
-
-          measureRects = function (difference, monthly_projection, projected_total) {
-            if (difference < 0) {
-              ymax = Results.projected_total;
-
-              current = 300 * (Results.monthly_total / ymax);
-              projection = 300 * (monthly_projection / ymax)
-              millage = 300 * (Results.fiber_tax / ymax)
-
-              currentRect = {x: 40, y: 300, w: 80, h: -current};
-              millageRect = {x: 160, y: 300 - projection, w: 80, h: -millage};
-
-            } else {
-              ymax = Results.monthly_total;
-              projection = 300 * (monthly_projection / ymax)
-              millage = Results.fiber_tax / ymax;
-
-              currentRect = {x: 40, y: 300, w: 80, h: -300};
-              millageRect = {x: 160, y: 300 - projection, w: 80, h: -(300 * millage)};
-
-            }
-            projectionRect = {x: 160, y: 300, w: 80, h: -(projection)};
-
-            drawRectangle(currentRect, context, "#8c999e");
-            drawRectangle(millageRect, context, "#a6d15e");
-            drawRectangle(projectionRect, context, "#296BB0");
-          };
-
-        context.clearRect(0,0,535,300);
-        measureRects(Results.monthly_total - Results.projected_total, Results.monthly_projection, Results.projected_total);
-
-        drawLegend(this.formatCurrency);
-        drawAxis(ymax);
-
-
-      },
-
-      total: function () {
-        Results.projected_total = parseFloat(Results.monthly_projection) + parseFloat(Results.fiber_tax);
-        Results.projected_total = this.formatCurrency(Math.round(Results.projected_total * 100) / 100);
-        Results.annual_savings = parseFloat(12 * Results.monthly_total) - parseFloat(12 * Results.projected_total);
-        Results.annual_savings = this.formatCurrency(Math.round(Results.annual_savings * 100) / 100);
       }
+      return val;
+    },
+
+    updateProjection: function (event) {
+      var projected_total = (Results.projected_total - Results.projected_internet + parseInt(this.value, 10)),
+        monthly_projection = projected_total - Results.fiber_tax;
+
+      document.getElementById('projected-internet').value = this.value;
+      Phase1.computeValues();
+      Response.total();
+      Response.fillTable();
+      Response.graph();
+    },
+
+    graph: function () {
+      var graph = document.getElementById("graph"),
+        context = graph.getContext("2d"),
+        current,
+        projection,
+        projectionRect,
+        millage,
+        currentRect,
+        millageRect,
+        ymax,
+        startTime,
+
+
+        drawLegend = function (formatCurrency) {
+          context.fillStyle = "#8C999E";
+          context.fillRect(310, 100, 20, 20);
+          context.fillStyle = "#296BB0";
+          context.fillRect(310, 60, 20, 20);
+          context.fillStyle = "#A6D15E";
+          context.fillRect(310, 20, 20, 20);
+          context.font= "normal 12px 'Ubuntu Mono', 'Roboto Mono', 'Segoe Mono', Consolas, Menlo, monospace";
+          context.fillStyle = "#666";
+          context.fillText("$" + formatCurrency(Results.fiber_tax) + " Fiber Millage", 340, 35);
+          context.fillText("$" + formatCurrency(Results.monthly_projection) + " Future Monthly Services", 340, 75);
+          context.fillText("$" + formatCurrency(Results.monthly_total) + " Current Monthly Services", 340, 115);
+        },
+        drawAxis = function () {
+          context.fillStyle = "#666";
+          context.fillText("$0", 0, 300);
+          context.moveTo(25, 0);
+          context.lineTo(30.5, 0);
+          context.lineTo(30.5, 300);
+          context.moveTo(25, 300);
+          context.lineTo(300, 300);
+          context.strokeStyle = "#ccc";
+          context.stroke();
+          context.fillText("$" + Math.floor(ymax), 0, 13);
+        },
+
+        measureRects = function (difference, monthly_projection, projected_total) {
+          if (difference < 0) {
+            ymax = Results.projected_total;
+
+            current = 300 * (Results.monthly_total / ymax);
+            projection = 300 * (monthly_projection / ymax)
+            millage = 300 * (Results.fiber_tax / ymax)
+
+            currentRect = {x: 40, y: 300, w: 80, h: -current};
+            millageRect = {x: 160, y: 300 - projection, w: 80, h: -millage};
+
+          } else {
+            ymax = Results.monthly_total;
+            projection = 300 * (monthly_projection / ymax)
+            millage = Results.fiber_tax / ymax;
+
+            currentRect = {x: 40, y: 300, w: 80, h: -300};
+            millageRect = {x: 160, y: 300 - projection, w: 80, h: -(300 * millage)};
+
+          }
+          projectionRect = {x: 160, y: 300, w: 80, h: -(projection)};
+
+          drawRectangle(currentRect, context, "#8c999e");
+          drawRectangle(millageRect, context, "#a6d15e");
+          drawRectangle(projectionRect, context, "#296BB0");
+        };
+
+      context.clearRect(0,0,535,300);
+      measureRects(Results.monthly_total - Results.projected_total, Results.monthly_projection, Results.projected_total);
+
+      drawLegend(this.formatCurrency);
+      drawAxis(ymax);
+
+
+    },
+
+    total: function () {
+      Results.projected_total = parseFloat(Results.monthly_projection) + parseFloat(Results.fiber_tax);
+      Results.projected_total = this.formatCurrency(Math.round(Results.projected_total * 100) / 100);
+      Results.annual_savings = parseFloat(12 * Results.monthly_total) - parseFloat(12 * Results.projected_total);
+      Results.annual_savings = this.formatCurrency(Math.round(Results.annual_savings * 100) / 100);
     }
   };
 
@@ -461,16 +456,7 @@
   };
 
 
-  init = function () {
-    var idx = 0,
-      forms = document.getElementsByTagName("form");
-    while (idx < forms.length) {
-      forms[idx].addEventListener("submit", IncrementPhase);
-      idx += 1;
-    }
-    Phases.phase1.init();
-  };
-  init();
+  Phase1.init();
 </script>
 </body>
 </html>
