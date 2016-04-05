@@ -184,33 +184,33 @@
             <td><span data-name="internet"></span></td>
             <td>
               <input type="range" min="25" max="40" value="32" id="slider">
-              <span data-name="projected_internet">$32</span><sup><a href="#fiber-cost">2</a></sup>
+              <output data-name="projected_internet">$32</output><sup><a href="#fiber-cost">2</a></sup>
             </td>
           </tr><tr>
             <th scope="row">Phone<sup><a href="#phone-cost">3</a></sup></th>
             <td><span data-name="phone"></td>
-            <td><span data-name="projected_phone"></span></td>
+            <td><output data-name="projected_phone"></output></td>
           </tr><tr>
             <th scope="row">TV/Video</th>
             <td><span data-name="video"></td>
-            <td><span data-name="projected_video"></span></td>
+            <td><output data-name="projected_video"></output></td>
           </tr>
           <tr>
             <th scope="row">Fiber Millage</th>
-            <td>-</td>
-            <td><span data-name="fiber_tax"></span></td>
+            <td>—</td>
+            <td><output data-name="fiber_tax"></output></td>
           </tr>
         </tbody>
         <tfoot>
           <tr>
             <th scope="row">Total</th>
-            <td><span data-name="monthly_total"></span></td>
-            <td><span data-name="projected_total"></span></td>
+            <td><output data-name="monthly_total"></output></td>
+            <td><output data-name="projected_total"></output></td>
           </tr>
         <tr>
           <th scope="row">Annual Savings</th>
           <td></td>
-          <td><span data-name="annual_savings"></span></td>
+          <td><output data-name="annual_savings"></output></td>
         </tfoot>
       </table>
 
@@ -326,11 +326,11 @@
     },
 
     fillTable: function () {
-        var cells = document.getElementsByTagName("td"),
+        var cells = document.querySelectorAll('[data-name]'),
           idx = 0,
           result;
       while (idx < cells.length) {
-        var element = cells[idx].getElementsByTagName("span")[0]
+        var element = cells[idx];
         if (element && element.hasAttribute('data-name')) {
           result = element.getAttribute('data-name')
           if (result !== undefined) {
