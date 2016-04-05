@@ -34,11 +34,11 @@ casper.test.begin("Math works with default values", 12, function suite(test) {
   });
 
   casper.then(function() {
-    test.assertSelectorHasText('td[data-name="projected_internet"]', '$32');
-    test.assertSelectorHasText('td[data-name="monthly_total"]', '$115');
-    test.assertSelectorHasText('td[data-name="projected_total"]', '$54.81');
-    test.assertSelectorHasText('td[data-name="fiber_tax"]', '$13.81');
-    test.assertSelectorHasText('td[data-name="annual_savings"]', '$722.28');
+    test.assertSelectorHasText('td [data-name="projected_internet"]', '$32');
+    test.assertSelectorHasText('td [data-name="monthly_total"]', '$115');
+    test.assertSelectorHasText('td [data-name="projected_total"]', '$54.81');
+    test.assertSelectorHasText('td [data-name="fiber_tax"]', '$13.81');
+    test.assertSelectorHasText('td [data-name="annual_savings"]', '$722.28');
   });
 
   casper.run(function() {
@@ -56,10 +56,10 @@ casper.test.begin("Math works when increasing taxable value", 4, function suite(
   });
 
   casper.then(function() {
-    test.assertSelectorHasText('td[data-name="monthly_total"]', '$115');
-    test.assertSelectorHasText('td[data-name="projected_total"]', '$75.53');
-    test.assertSelectorHasText('td[data-name="fiber_tax"]', '$34.53');
-    test.assertSelectorHasText('td[data-name="annual_savings"]', '$473.64');
+    test.assertSelectorHasText('td [data-name="monthly_total"]', '$115');
+    test.assertSelectorHasText('td [data-name="projected_total"]', '$75.53');
+    test.assertSelectorHasText('td [data-name="fiber_tax"]', '$34.53');
+    test.assertSelectorHasText('td [data-name="annual_savings"]', '$473.64');
   });
 
   casper.run(function() {
@@ -76,10 +76,10 @@ casper.test.begin("Math works when decreasing taxable value", 4, function suite(
   });
 
   casper.then(function() {
-    test.assertSelectorHasText('td[data-name="monthly_total"]', '$115');
-    test.assertSelectorHasText('td[data-name="projected_total"]', '$47.91');
-    test.assertSelectorHasText('td[data-name="fiber_tax"]', '$6.91');
-    test.assertSelectorHasText('td[data-name="annual_savings"]', '$805.08');
+    test.assertSelectorHasText('td [data-name="monthly_total"]', '$115');
+    test.assertSelectorHasText('td [data-name="projected_total"]', '$47.91');
+    test.assertSelectorHasText('td [data-name="fiber_tax"]', '$6.91');
+    test.assertSelectorHasText('td [data-name="annual_savings"]', '$805.08');
   });
 
   casper.run(function() {
@@ -98,10 +98,10 @@ casper.test.begin("Properly rounds to two decimals", 4, function suite(test) {
   });
 
   casper.then(function() {
-    test.assertSelectorHasText('td[data-name="monthly_total"]', '$115');
-    test.assertSelectorHasText('td[data-name="projected_total"]', '$78.60');
-    test.assertSelectorHasText('td[data-name="fiber_tax"]', '$7.60');
-    test.assertSelectorHasText('td[data-name="annual_savings"]', '$436.80');
+    test.assertSelectorHasText('td [data-name="monthly_total"]', '$115');
+    test.assertSelectorHasText('td [data-name="projected_total"]', '$78.60');
+    test.assertSelectorHasText('td [data-name="fiber_tax"]', '$7.60');
+    test.assertSelectorHasText('td [data-name="annual_savings"]', '$436.80');
   });
 
   casper.run(function() {
@@ -124,10 +124,10 @@ casper.test.begin("Works with non-numbers", 4, function suite(test) {
   });
 
   casper.then(function() {
-    test.assertSelectorHasText('td[data-name="monthly_total"]', '$0');
-    test.assertSelectorHasText('td[data-name="projected_total"]', '$0');
-    test.assertSelectorHasText('td[data-name="fiber_tax"]', '$0');
-    test.assertSelectorHasText('td[data-name="annual_savings"]', '$0');
+    test.assertSelectorHasText('td [data-name="monthly_total"]', '$0');
+    test.assertSelectorHasText('td [data-name="projected_total"]', '$0');
+    test.assertSelectorHasText('td [data-name="fiber_tax"]', '$0');
+    test.assertSelectorHasText('td [data-name="annual_savings"]', '$0');
   });
 
   casper.run(function() {
