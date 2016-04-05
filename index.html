@@ -38,9 +38,6 @@
       border-left: solid 1px #ccc;
       text-align: right;
     }
-    #results .projected-internet {
-      border-left: none;
-    }
 
     tbody {
        border-bottom: solid 1px #ccc;
@@ -122,13 +119,12 @@
               $ <input type="numeric" size="6" inputmode="number" name="internet" id="internet" class="service" value="75">
             </td>
             <td>
-              $32<sup><a href="#fiber-cost">2</a>
+              $32<sup><a href="#fiber-cost">2</a></sup>
               <input type="hidden" id="projected-internet" name="projected_internet" class="projection" value="32">
             </td>
           </tr><tr>
             <th scope="row">
-              <label for="phone">Phone<sup><a href="#phone-cost">3</a></sup>
-</label>
+              <label for="phone">Phone<sup><a href="#phone-cost">3</a></sup></label>
             </th>
             <td data-name="phone">
             $ <input type="numeric" size="6" inputmode="number" name="phone" id="phone" class="service" value="40">
@@ -162,7 +158,7 @@
       </table>
 
 
-      <h2>Enter your home’s taxable value<sup><a href="#tv_lookup">4</a></sup></h2>
+      <h2>Enter your home’s taxable value<sup><a href="#taxable-lookup">4</a></sup></h2>
         <fieldset>
           <label for="taxable_value">Taxable Value</label>
           $ <input type="numeric" inputmode="number" name="taxable_value" id="taxable_value" value="100000">
@@ -170,12 +166,7 @@
         <p class="total">Monthly Fiber Millage: <strong id="fiber_tax">$13.81</strong></p>
         <button type="submit">Next &gt;</button>
       </form>
-      <p class="note" id="bundles"><sup>1</sup> If you have a bundled plan including internet with phone, or video, just fill in the internet field.</p>
-      <p class="note" id="fiber-cost"><sup>2</sup> $25–40 is the projected monthly cost of 100–120 <abbr title="Megabits per second">Mbps</abbr> broadband internet in the Laketown plan.</p>
-      <p class="note" id="phone-cost"><sup>3</sup> Landline phones start at $40 for most residents. Switching to an internet-based phone provider like Vonage or magicJack can be $9/month or less.</p>
-      <p class="note" id="tv_lookup"><sup>4</sup> Don’t know your taxable value? No problem. You can find it by calling the township at <a href="tel:+16163353050" class="tel">(616) 335-3050</a>
-        or visiting the <a href="https://allegancounty.is.bsasoftware.com/bsa.is/TaxServices/ServiceTaxSearch.aspx?i=3&appid=1&unit=380">Allegan County website</a> and searching for your address.
-      </p>
+
     </div>
 
     <div class="phase" id="results" style="display: none">
@@ -184,42 +175,42 @@
           <tr>
             <th>Service</th>
             <th>Current Monthly Cost</th>
-            <th colspan="2">Future Monthly Cost</th>
+            <th>Future Monthly Cost</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <th scope="row">Internet</th>
-            <td data-name="internet"></td>
+            <th scope="row">Internet<sup><a href="#bundles">1</a></sup></th>
+            <td><span data-name="internet"></span></td>
             <td>
               <input type="range" min="25" max="40" value="32" id="slider">
+              <span data-name="projected_internet">$32</span><sup><a href="#fiber-cost">2</a></sup>
             </td>
-            <td data-name="projected_internet" class="projected-internet">$32</td>
           </tr><tr>
-            <th scope="row">Phone</th>
-            <td data-name="phone"></td>
-            <td data-name="projected_phone" colspan="2"></td>
+            <th scope="row">Phone<sup><a href="#phone-cost">3</a></sup></th>
+            <td><span data-name="phone"></td>
+            <td><span data-name="projected_phone"></span></td>
           </tr><tr>
             <th scope="row">TV/Video</th>
-            <td data-name="video"></td>
-            <td data-name="projected_video" colspan="2"></td>
+            <td><span data-name="video"></td>
+            <td><span data-name="projected_video"></span></td>
           </tr>
           <tr>
             <th scope="row">Fiber Millage</th>
             <td>-</td>
-            <td data-name="fiber_tax" colspan="2"></td>
+            <td><span data-name="fiber_tax"></span></td>
           </tr>
         </tbody>
         <tfoot>
           <tr>
             <th scope="row">Total</th>
-            <td data-name="monthly_total"></td>
-            <td data-name="projected_total" colspan="2"></td>
+            <td><span data-name="monthly_total"></span></td>
+            <td><span data-name="projected_total"></span></td>
           </tr>
         <tr>
           <th scope="row">Annual Savings</th>
           <td></td>
-          <td data-name="annual_savings" colspan="2"></td>
+          <td><span data-name="annual_savings"></span></td>
         </tfoot>
       </table>
 
@@ -229,6 +220,13 @@
       </figure>
 
     </div>
+
+    <p class="note" id="bundles"><sup>1</sup> If you have a bundled plan including internet with phone, or video, just fill in the internet field.</p>
+    <p class="note" id="fiber-cost"><sup>2</sup> $25–40 is the projected monthly cost of 100–120 <abbr title="Megabits per second">Mbps</abbr> broadband internet in the Laketown plan.</p>
+    <p class="note" id="phone-cost"><sup>3</sup> Landline phones start at $40 for most residents. Switching to an internet-based phone provider like Vonage or magicJack can be $9/month or less.</p>
+    <p class="note" id="taxable-lookup"><sup>4</sup> Don’t know your taxable value? No problem. You can find it by calling the township at <a href="tel:+16163353050" class="tel">(616) 335-3050</a>
+      or visiting the <a href="https://allegancounty.is.bsasoftware.com/bsa.is/TaxServices/ServiceTaxSearch.aspx?i=3&appid=1&unit=380">Allegan County website</a> and searching for your address.
+    </p>
 
   </div>
 <script>
@@ -336,12 +334,13 @@
             idx = 0,
             result;
         while (idx < cells.length) {
-          if (cells[idx].hasAttribute('data-name')) {
-            result = cells[idx].getAttribute('data-name')
+          var element = cells[idx].getElementsByTagName("span")[0]
+          if (element && element.hasAttribute('data-name')) {
+            result = element.getAttribute('data-name')
             if (result !== undefined) {
-              cells[idx].textContent = "$" + this.formatCurrency(Results[result]);
+              element.textContent = "$" + this.formatCurrency(Results[result]);
             } else {
-              cells[idx].textContent = "$0";
+              element.textContent = "$0";
             }
           }
           idx += 1;
