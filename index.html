@@ -214,9 +214,10 @@
 
     computeValues: function () {
       var values = Calculator.values,
-        projections = Calculator.projections;
+        projections = Calculator.projections,
+        taxable_value = Calculator.taxable_value[0];
 
-      Calculator.computeTaxableValue();
+      Results.fiber_millage = Math.round(100 * (parseInt(+taxable_value.value, 10) * 0.0016572) / 12) / 100.00;
 
       // projected_monthly is without millage
       Results.projected_monthly = Calculator.sum(projections);
@@ -240,11 +241,6 @@
           element.textContent = "$" + Calculator.formatCurrency(Results[id]);
         }
       }
-    },
-
-    computeTaxableValue: function () {
-      var field = Calculator.taxable_value[0];
-      Results.fiber_millage = (Math.round(100 * (parseInt(+field.value, 10) * 0.0016572) / 12) / 100.00);
     },
 
     formatCurrency: function(val) {
