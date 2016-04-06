@@ -241,6 +241,8 @@
           element.textContent = "$" + Calculator.formatCurrency(Results[id]);
         }
       }
+
+      document.getElementById('projected-internet-display').value = "$" + document.getElementById('projected-internet').value;
     },
 
     formatCurrency: function(val) {
@@ -259,7 +261,6 @@
       var projected_total = (Results.projected_total - Results.projected_internet + parseInt(this.value, 10)),
         projected_monthly = projected_total - Results.fiber_millage;
 
-      document.getElementById('projected-internet-display').value = "$" + document.getElementById('projected-internet').value;
       Calculator.computeValues();
       Calculator.graph();
     },
@@ -278,16 +279,16 @@
 
         drawLegend = function (formatCurrency) {
           context.fillStyle = "#8C999E";
-          context.fillRect(310, 100, 20, 20);
+          context.fillRect(280, 100, 20, 20);
           context.fillStyle = "#296BB0";
-          context.fillRect(310, 60, 20, 20);
+          context.fillRect(280, 60, 20, 20);
           context.fillStyle = "#A6D15E";
-          context.fillRect(310, 20, 20, 20);
+          context.fillRect(280, 20, 20, 20);
           context.font= "normal 12px 'Ubuntu Mono', 'Roboto Mono', 'Segoe Mono', Consolas, Menlo, monospace";
           context.fillStyle = "#666";
-          context.fillText("$" + formatCurrency(Results.fiber_millage) + " Fiber Millage", 340, 35);
-          context.fillText("$" + formatCurrency(Results.projected_monthly) + " Future Monthly Services", 340, 75);
-          context.fillText("$" + formatCurrency(Results.current_monthly) + " Current Monthly Services", 340, 115);
+          context.fillText("$" + formatCurrency(Results.fiber_millage) + " Fiber Millage", 310, 35);
+          context.fillText("$" + formatCurrency(Results.projected_monthly) + " Future Monthly Services", 310, 75);
+          context.fillText("$" + formatCurrency(Results.current_monthly) + " Current Monthly Services", 310, 115);
         },
         drawAxis = function () {
           context.fillStyle = "#666";
