@@ -99,120 +99,60 @@
   <div id="laketown-calculator" class="container">
     <h1>Laketown Fiber</h1>
 
-    <div class="phase" id="phase1">
-      <h2>Enter your monthly costs<sup><a href="#bundles">1</a></sup></h2>
+    <div class="phase" id="results">
       <form action="#results" id="costs" data-phase="phase1">
-      <table>
-        <thead>
-          <tr>
-            <th>Service</th>
-            <th>Current Monthly Cost</th>
-            <th>Future Monthly Cost</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th scope="row">
-              <label for="internet">Internet</label>
-            </th>
-            <td data-name="internet">
-              $ <input type="numeric" size="6" inputmode="number" name="internet" id="internet" class="service" value="75">
-            </td>
-            <td>
-              $32<sup><a href="#fiber-cost">2</a></sup>
-              <input type="hidden" id="projected-internet" name="projected_internet" class="projection" value="32">
-            </td>
-          </tr><tr>
-            <th scope="row">
-              <label for="phone">Phone<sup><a href="#phone-cost">3</a></sup></label>
-            </th>
-            <td data-name="phone">
-            $ <input type="numeric" size="6" inputmode="number" name="phone" id="phone" class="service" value="40">
-            </td>
-            <td data-name="phone">
-            $ <input type="numeric" size="6" inputmode="number" name="projected_phone" id="projected-phone" class="projection" value="9">
-            </td>
-          </tr><tr>
-            <th scope="row">
-              <label for="video">TV/Video</label>
-            </th>
-            <td data-name="video">
-            $ <input type="numeric" size="6" inputmode="number" name="video" id="video" class="service" value="0">
-            </td>
-            <td data-name="video">
-            $ <input type="numeric" size="6" inputmode="number" name="projected_video" id="projected-video" class="projection" value="0">
-            </td>
-          </tr>
-        </tbody>
-        <tfoot>
-          <tr>
-            <th scope="row" class="total">Total:</th>
-            <td>
-              <strong id="current_monthly">$115</strong>
-            </td>
-            <td>
-              <strong id="projected_monthly">$59</strong>
-            </td>
-          </tr>
-        </tfoot>
-      </table>
-
-
-      <h2>Enter your home’s taxable value<sup><a href="#taxable-lookup">4</a></sup></h2>
+        <h2>Enter your home’s taxable value<sup><a href="#taxable-lookup">4</a></sup></h2>
         <fieldset>
           <label for="taxable_value">Taxable Value</label>
           $ <input type="numeric" inputmode="number" name="taxable_value" id="taxable_value" value="100000">
         </fieldset>
-        <p class="total">Monthly Fiber Millage: <strong id="fiber_tax">$13.81</strong></p>
-        <button type="submit">Next &gt;</button>
+
+        <h2>Enter your monthly costs</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Service</th>
+              <th>Current Monthly Cost</th>
+              <th>Future Monthly Cost</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Internet<sup><a href="#bundles">1</a></sup></th>
+              <td>$ <input type="numeric" size="6" inputmode="number" name="internet" id="internet" class="service" value="75"></td>
+              <td>
+                <input type="range" min="25" max="40" value="32" id="projected-internet" class="projection" name="projected_internet">
+                <output data-name="projected_internet" id="projected-internet-display">$32</output><sup><a href="#fiber-cost">2</a></sup>
+              </td>
+            </tr><tr>
+              <th scope="row">Phone<sup><a href="#phone-cost">3</a></sup></th>
+              <td>$ <input type="numeric" size="6" inputmode="number" name="phone" id="phone" class="service" value="40"></td>
+              <td>$ <input type="numeric" size="6" inputmode="number" name="projected_phone" id="projected-phone" class="projection" value="9"></td>
+            </tr><tr>
+              <th scope="row">TV/Video</th>
+              <td>$ <input type="numeric" size="6" inputmode="number" name="video" id="video" class="service" value="0"></td>
+              <td>$ <input type="numeric" size="6" inputmode="number" name="projected_video" id="projected-video" class="projection" value="0"></td>
+            </tr>
+            <tr>
+              <th scope="row">Fiber Millage</th>
+              <td>—</td>
+              <td><output data-name="fiber_millage" id="fiber_millage"></output></td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <th scope="row">Total</th>
+              <td><output data-name="monthly_total" id="current_monthly"></output></td>
+              <td><output data-name="projected_total" id="projected_monthly"></output></td>
+            </tr>
+          <tr>
+            <th scope="row">Annual Savings</th>
+            <td></td>
+            <td><output data-name="annual_savings" id="annual_savings"></output></td>
+          </tfoot>
+        </table>
+
       </form>
-
-    </div>
-
-    <div class="phase" id="results" style="display: none">
-      <table>
-        <thead>
-          <tr>
-            <th>Service</th>
-            <th>Current Monthly Cost</th>
-            <th>Future Monthly Cost</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th scope="row">Internet<sup><a href="#bundles">1</a></sup></th>
-            <td><span data-name="internet"></span></td>
-            <td>
-              <input type="range" min="25" max="40" value="32" id="slider">
-              <output data-name="projected_internet">$32</output><sup><a href="#fiber-cost">2</a></sup>
-            </td>
-          </tr><tr>
-            <th scope="row">Phone<sup><a href="#phone-cost">3</a></sup></th>
-            <td><span data-name="phone"></td>
-            <td><output data-name="projected_phone"></output></td>
-          </tr><tr>
-            <th scope="row">TV/Video</th>
-            <td><span data-name="video"></td>
-            <td><output data-name="projected_video"></output></td>
-          </tr>
-          <tr>
-            <th scope="row">Fiber Millage</th>
-            <td>—</td>
-            <td><output data-name="fiber_tax"></output></td>
-          </tr>
-        </tbody>
-        <tfoot>
-          <tr>
-            <th scope="row">Total</th>
-            <td><output data-name="monthly_total"></output></td>
-            <td><output data-name="projected_total"></output></td>
-          </tr>
-        <tr>
-          <th scope="row">Annual Savings</th>
-          <td></td>
-          <td><output data-name="annual_savings"></output></td>
-        </tfoot>
-      </table>
 
       <figure>
         <figcaption>Future Monthly Costs</figcaption>
@@ -238,26 +178,13 @@
       this.values = document.querySelectorAll("#costs .service");
       this.projections = document.querySelectorAll("#costs .projection");
       this.taxable_value = document.querySelectorAll("#taxable_value");
-      this.fiber_tax = document.getElementById("fiber_tax");
       this.addListeners(this.values);
       this.addListeners(this.projections);
       this.addListeners(this.taxable_value);
 
-      document.getElementById('costs').addEventListener("submit", function (event) {
-          var phases = document.querySelectorAll(".phase"),
-            idx = 0;
-          event.preventDefault();
-
-          Phase1.computeValues();
-
-          while(idx < phases.length) {
-            phases[idx].style.display = "none";
-            idx += 1;
-          }
-          document.querySelector(this.getAttribute("action")).style.display = "block";
-          Response.init();
-        });
-
+      this.computeValues();
+      Response.init();
+      Response.updateProjection();
     },
 
     addListeners: function (values) {
@@ -265,7 +192,7 @@
         while (idx < values.length) {
           values[idx].addEventListener("keypress", this.procede);
           values[idx].addEventListener("focus", this.procede);
-          values[idx].addEventListener("change", this.computeValues);
+          values[idx].addEventListener("change", Response.updateProjection);
           values[idx].addEventListener("keyup", this.wait);
           idx += 1;
         }
@@ -276,7 +203,7 @@
     },
 
     wait: function () {
-      window.delay = window.setTimeout(Phase1.computeValues, 500);
+      window.delay = window.setTimeout(Response.updateProjection, 500);
     },
 
     sum: function (values) {
@@ -298,49 +225,41 @@
       var values = Phase1.values,
         projections = Phase1.projections,
         monthly_total = document.getElementById("current_monthly"),
-        monthly_projection = document.getElementById("projected_monthly");
+        projected_total = document.getElementById("projected_monthly"),
+        annual_savings = document.getElementById('annual_savings');
 
+      Phase1.computeTaxableValue();
+
+      // monthly_projection is without millage
       Results.monthly_projection = Phase1.sum(projections);
-      monthly_projection.textContent = "$" + Results.monthly_projection;
+
       Results.monthly_total = Phase1.sum(values);
       monthly_total.textContent = "$" + Results.monthly_total;
 
-      Phase1.computeTaxableValue();
+      // projected_total is monthly_projection + fiber_millage
+      Results.projected_total = parseFloat(Results.monthly_projection) + parseFloat(Results.fiber_millage);
+      Results.projected_total = Response.formatCurrency(Math.round(Results.projected_total * 100) / 100);
+      projected_total.textContent = "$" + Results.projected_total;
+
+
+      Results.annual_savings = parseFloat(12 * Results.monthly_total) - parseFloat(12 * Results.projected_total);
+      Results.annual_savings = Response.formatCurrency(Math.round(Results.annual_savings * 100) / 100);
+      annual_savings.textContent = "$" + Results.annual_savings;
     },
 
     computeTaxableValue: function () {
-      var fiber_tax = document.getElementById("fiber_tax"),
+      var fiber_millage = document.getElementById("fiber_millage"),
         field = Phase1.taxable_value[0];
-      Results.fiber_tax = (Math.round(100 * (parseInt(+field.value, 10) * 0.0016572) / 12) / 100.00);
-      fiber_tax.textContent = "$" + Results.fiber_tax;
+      Results.fiber_millage = (Math.round(100 * (parseInt(+field.value, 10) * 0.0016572) / 12) / 100.00);
+      fiber_millage.textContent = "$" + Response.formatCurrency(Results.fiber_millage);
     }
   };
 
   Response = {
     init: function () {
-      this.total();
-      this.fillTable();
       this.graph();
-      document.getElementById('slider').addEventListener("change", Response.updateProjection);
-      document.getElementById('slider').addEventListener("input", Response.updateProjection);
-    },
-
-    fillTable: function () {
-        var cells = document.querySelectorAll('[data-name]'),
-          idx = 0,
-          result;
-      while (idx < cells.length) {
-        var element = cells[idx];
-        if (element && element.hasAttribute('data-name')) {
-          result = element.getAttribute('data-name')
-          if (result !== undefined) {
-            element.textContent = "$" + this.formatCurrency(Results[result]);
-          } else {
-            element.textContent = "$0";
-          }
-        }
-        idx += 1;
-      }
+      document.getElementById('projected-internet').addEventListener("change", Response.updateProjection);
+      document.getElementById('projected-internet').addEventListener("input", Response.updateProjection);
     },
 
     formatCurrency: function(val) {
@@ -357,12 +276,10 @@
 
     updateProjection: function (event) {
       var projected_total = (Results.projected_total - Results.projected_internet + parseInt(this.value, 10)),
-        monthly_projection = projected_total - Results.fiber_tax;
+        monthly_projection = projected_total - Results.fiber_millage;
 
-      document.getElementById('projected-internet').value = this.value;
+      document.getElementById('projected-internet-display').value = "$" + document.getElementById('projected-internet').value;
       Phase1.computeValues();
-      Response.total();
-      Response.fillTable();
       Response.graph();
     },
 
@@ -388,7 +305,7 @@
           context.fillRect(310, 20, 20, 20);
           context.font= "normal 12px 'Ubuntu Mono', 'Roboto Mono', 'Segoe Mono', Consolas, Menlo, monospace";
           context.fillStyle = "#666";
-          context.fillText("$" + formatCurrency(Results.fiber_tax) + " Fiber Millage", 340, 35);
+          context.fillText("$" + formatCurrency(Results.fiber_millage) + " Fiber Millage", 340, 35);
           context.fillText("$" + formatCurrency(Results.monthly_projection) + " Future Monthly Services", 340, 75);
           context.fillText("$" + formatCurrency(Results.monthly_total) + " Current Monthly Services", 340, 115);
         },
@@ -411,7 +328,7 @@
 
             current = 300 * (Results.monthly_total / ymax);
             projection = 300 * (monthly_projection / ymax)
-            millage = 300 * (Results.fiber_tax / ymax)
+            millage = 300 * (Results.fiber_millage / ymax)
 
             currentRect = {x: 40, y: 300, w: 80, h: -current};
             millageRect = {x: 160, y: 300 - projection, w: 80, h: -millage};
@@ -419,7 +336,7 @@
           } else {
             ymax = Results.monthly_total;
             projection = 300 * (monthly_projection / ymax)
-            millage = Results.fiber_tax / ymax;
+            millage = Results.fiber_millage / ymax;
 
             currentRect = {x: 40, y: 300, w: 80, h: -300};
             millageRect = {x: 160, y: 300 - projection, w: 80, h: -(300 * millage)};
@@ -438,14 +355,6 @@
       drawLegend(this.formatCurrency);
       drawAxis(ymax);
 
-
-    },
-
-    total: function () {
-      Results.projected_total = parseFloat(Results.monthly_projection) + parseFloat(Results.fiber_tax);
-      Results.projected_total = this.formatCurrency(Math.round(Results.projected_total * 100) / 100);
-      Results.annual_savings = parseFloat(12 * Results.monthly_total) - parseFloat(12 * Results.projected_total);
-      Results.annual_savings = this.formatCurrency(Math.round(Results.annual_savings * 100) / 100);
     }
   };
 

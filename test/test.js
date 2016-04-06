@@ -27,17 +27,14 @@ casper.test.begin("Math works with default values", 12, function suite(test) {
     // taxable value
     test.assertField('taxable_value', '100000');
 
-
-    this.fill('form', {
-      // q: "casperjs"
-    }, true);
+    this.fill('form', {}, true);
   });
 
   casper.then(function() {
     test.assertSelectorHasText('td [data-name="projected_internet"]', '$32');
     test.assertSelectorHasText('td [data-name="monthly_total"]', '$115');
     test.assertSelectorHasText('td [data-name="projected_total"]', '$54.81');
-    test.assertSelectorHasText('td [data-name="fiber_tax"]', '$13.81');
+    test.assertSelectorHasText('td [data-name="fiber_millage"]', '$13.81');
     test.assertSelectorHasText('td [data-name="annual_savings"]', '$722.28');
   });
 
@@ -52,13 +49,13 @@ casper.test.begin("Math works when increasing taxable value", 4, function suite(
   casper.start(page, function() {
     this.fill('form', {
       taxable_value: "250000"
-    }, true);
+    }, false);
   });
 
   casper.then(function() {
     test.assertSelectorHasText('td [data-name="monthly_total"]', '$115');
     test.assertSelectorHasText('td [data-name="projected_total"]', '$75.53');
-    test.assertSelectorHasText('td [data-name="fiber_tax"]', '$34.53');
+    test.assertSelectorHasText('td [data-name="fiber_millage"]', '$34.53');
     test.assertSelectorHasText('td [data-name="annual_savings"]', '$473.64');
   });
 
@@ -72,13 +69,13 @@ casper.test.begin("Math works when decreasing taxable value", 4, function suite(
   casper.start(page, function() {
     this.fill('form', {
       taxable_value: "50000"
-    }, true);
+    }, false);
   });
 
   casper.then(function() {
     test.assertSelectorHasText('td [data-name="monthly_total"]', '$115');
     test.assertSelectorHasText('td [data-name="projected_total"]', '$47.91');
-    test.assertSelectorHasText('td [data-name="fiber_tax"]', '$6.91');
+    test.assertSelectorHasText('td [data-name="fiber_millage"]', '$6.91');
     test.assertSelectorHasText('td [data-name="annual_savings"]', '$805.08');
   });
 
@@ -94,13 +91,13 @@ casper.test.begin("Properly rounds to two decimals", 4, function suite(test) {
     this.fill('form', {
       projected_video: "30",
       taxable_value: "55000"
-    }, true);
+    }, false);
   });
 
   casper.then(function() {
     test.assertSelectorHasText('td [data-name="monthly_total"]', '$115');
     test.assertSelectorHasText('td [data-name="projected_total"]', '$78.60');
-    test.assertSelectorHasText('td [data-name="fiber_tax"]', '$7.60');
+    test.assertSelectorHasText('td [data-name="fiber_millage"]', '$7.60');
     test.assertSelectorHasText('td [data-name="annual_savings"]', '$436.80');
   });
 
@@ -118,16 +115,15 @@ casper.test.begin("Works with non-numbers", 4, function suite(test) {
       internet: "",
       projected_video: "",
       projected_phone: "",
-      projected_internet: "",
       taxable_value: ""
-    }, true);
+    }, false);
   });
 
   casper.then(function() {
     test.assertSelectorHasText('td [data-name="monthly_total"]', '$0');
-    test.assertSelectorHasText('td [data-name="projected_total"]', '$0');
-    test.assertSelectorHasText('td [data-name="fiber_tax"]', '$0');
-    test.assertSelectorHasText('td [data-name="annual_savings"]', '$0');
+    test.assertSelectorHasText('td [data-name="projected_total"]', '$32');
+    test.assertSelectorHasText('td [data-name="fiber_millage"]', '$0');
+    test.assertSelectorHasText('td [data-name="annual_savings"]', '$-384');
   });
 
   casper.run(function() {
