@@ -50,28 +50,10 @@
       display: inline-block;
       text-align: left;
     }
-    button {
-      display: block;
-      width: 100%;
-      padding: .3em 1em;
-      border: none;
-      border-radius: 3px;
-      color: #fff;
-      background: #455C33;
-      font-size: inherit;
-      font-family: inherit;
-    }
-    fieldset {
-      border: none;
-      background: rgba(0,0,0,0.1);
-    }
     input {
       font-size: 130%;
       font-family: inherit;
       text-align: right;
-    }
-    label {
-      display: block;
     }
     .note {
       color: #ccc;
@@ -80,9 +62,9 @@
       text-align: left;
     }
 
-    .total {
+    #annual_savings {
       font-size: 130%;
-      text-align: right;
+      font-weight: bold;
     }
 
     figure {
@@ -101,31 +83,38 @@
 
     <div class="phase" id="results">
       <form action="#results" id="costs" data-phase="phase1">
-        <h2>Enter your home’s taxable value<sup><a href="#taxable-lookup">4</a></sup></h2>
-        <fieldset>
-          <label for="taxable_value">Taxable Value</label>
-          $ <input type="numeric" inputmode="number" name="taxable_value" id="taxable_value" value="100000">
-        </fieldset>
+        <h2>Enter your home’s taxable value<sup><a href="#taxable-lookup">1</a></sup></h2>
+        <table>
+          <tbody>
+            <tr>
+              <th scope="row">Taxable Value</th>
+              <td>
+                $ <input type="numeric" inputmode="number" name="taxable_value" id="taxable_value" value="100000">
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
 
         <h2>Enter your monthly costs</h2>
         <table>
           <thead>
             <tr>
-              <th>Service</th>
+              <th></th>
               <th>Current Monthly Cost</th>
               <th>Future Monthly Cost</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <th scope="row">Internet<sup><a href="#bundles">1</a></sup></th>
+              <th scope="row">Internet<sup><a href="#bundles">2</a></sup></th>
               <td>$ <input type="numeric" size="6" inputmode="number" name="internet" id="internet" class="service" value="75"></td>
               <td>
                 <input type="range" min="25" max="40" value="32" id="projected-internet" class="projection" name="projected_internet">
-                <output data-name="projected_internet" id="projected-internet-display">$32</output><sup><a href="#fiber-cost">2</a></sup>
+                <output data-name="projected_internet" id="projected-internet-display">$32</output><sup><a href="#fiber-cost">3</a></sup>
               </td>
             </tr><tr>
-              <th scope="row">Phone<sup><a href="#phone-cost">3</a></sup></th>
+              <th scope="row">Phone<sup><a href="#phone-cost">4</a></sup></th>
               <td>$ <input type="numeric" size="6" inputmode="number" name="phone" id="phone" class="service" value="40"></td>
               <td>$ <input type="numeric" size="6" inputmode="number" name="projected_phone" id="projected-phone" class="projection" value="9"></td>
             </tr><tr>
@@ -161,12 +150,12 @@
 
     </div>
 
-    <p class="note" id="bundles"><sup>1</sup> If you have a bundled plan including internet with phone, or video, just fill in the internet field.</p>
-    <p class="note" id="fiber-cost"><sup>2</sup> $25–40 is the projected monthly cost of 100–120 <abbr title="Megabits per second">Mbps</abbr> broadband internet in the Laketown plan. The more people who sign up, the lower the cost.</p>
-    <p class="note" id="phone-cost"><sup>3</sup> Landline phones start at $40 for most residents. Switching to an internet-based phone provider like Vonage or magicJack can be $9/month or less.</p>
-    <p class="note" id="taxable-lookup"><sup>4</sup> Don’t know your taxable value? No problem. You can find it by calling the township at <a href="tel:+16163353050" class="tel">(616) 335-3050</a>
+    <p class="note" id="taxable-lookup"><sup>1</sup> Don’t know your taxable value? No problem. You can find it by calling the township at <a href="tel:+16163353050" class="tel">(616) 335-3050</a>
       or visiting the <a href="https://allegancounty.is.bsasoftware.com/bsa.is/TaxServices/ServiceTaxSearch.aspx?i=3&appid=1&unit=380">Allegan County website</a> and searching for your address.
     </p>
+    <p class="note" id="bundles"><sup>2</sup> If you have a bundled plan including internet with phone, or video, just fill in the internet field.</p>
+    <p class="note" id="fiber-cost"><sup>3</sup> $25–40 is the projected monthly cost of 100–120 <abbr title="Megabits per second">Mbps</abbr> broadband internet in the Laketown plan. The more people who sign up, the lower the cost.</p>
+    <p class="note" id="phone-cost"><sup>4</sup> Landline phones start at $40 for most residents. Switching to an internet-based phone provider like Vonage or magicJack can be $9/month or less.</p>
 
   </div>
 <script>
