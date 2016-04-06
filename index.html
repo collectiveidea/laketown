@@ -161,19 +161,21 @@
 <script>
   Results = {};
 
-  Phase1 = {
+  Calculator = {
 
     init: function () {
       this.values = document.querySelectorAll("#costs .service");
       this.projections = document.querySelectorAll("#costs .projection");
       this.taxable_value = document.querySelectorAll("#taxable_value");
+      this.projected_internet = document.getElementById('projected-internet');
       this.addListeners(this.values);
       this.addListeners(this.projections);
       this.addListeners(this.taxable_value);
+      this.projected_internet.addEventListener("change", Calculator.updateProjection);
+      this.projected_internet.addEventListener("input", Calculator.updateProjection);
 
       this.computeValues();
-      Response.init();
-      Response.updateProjection();
+      Calculator.updateProjection();
     },
 
     addListeners: function (values) {
@@ -181,7 +183,7 @@
         while (idx < values.length) {
           values[idx].addEventListener("keypress", this.procede);
           values[idx].addEventListener("focus", this.procede);
-          values[idx].addEventListener("change", Response.updateProjection);
+          values[idx].addEventListener("change", Calculator.updateProjection);
           values[idx].addEventListener("keyup", this.wait);
           idx += 1;
         }
@@ -192,7 +194,7 @@
     },
 
     wait: function () {
-      window.delay = window.setTimeout(Response.updateProjection, 500);
+      window.delay = window.setTimeout(Calculator.updateProjection, 500);
     },
 
     sum: function (values) {
@@ -211,44 +213,36 @@
     },
 
     computeValues: function () {
-      var values = Phase1.values,
-        projections = Phase1.projections,
+      var values = Calculator.values,
+        projections = Calculator.projections,
         monthly_total = document.getElementById("current_monthly"),
         projected_total = document.getElementById("projected_monthly"),
         annual_savings = document.getElementById('annual_savings');
 
-      Phase1.computeTaxableValue();
+      Calculator.computeTaxableValue();
 
       // monthly_projection is without millage
-      Results.monthly_projection = Phase1.sum(projections);
+      Results.monthly_projection = Calculator.sum(projections);
 
-      Results.monthly_total = Phase1.sum(values);
+      Results.monthly_total = Calculator.sum(values);
       monthly_total.textContent = "$" + Results.monthly_total;
 
       // projected_total is monthly_projection + fiber_millage
       Results.projected_total = parseFloat(Results.monthly_projection) + parseFloat(Results.fiber_millage);
-      Results.projected_total = Response.formatCurrency(Math.round(Results.projected_total * 100) / 100);
+      Results.projected_total = Calculator.formatCurrency(Math.round(Results.projected_total * 100) / 100);
       projected_total.textContent = "$" + Results.projected_total;
 
 
       Results.annual_savings = parseFloat(12 * Results.monthly_total) - parseFloat(12 * Results.projected_total);
-      Results.annual_savings = Response.formatCurrency(Math.round(Results.annual_savings * 100) / 100);
+      Results.annual_savings = Calculator.formatCurrency(Math.round(Results.annual_savings * 100) / 100);
       annual_savings.textContent = "$" + Results.annual_savings;
     },
 
     computeTaxableValue: function () {
       var fiber_millage = document.getElementById("fiber_millage"),
-        field = Phase1.taxable_value[0];
+        field = Calculator.taxable_value[0];
       Results.fiber_millage = (Math.round(100 * (parseInt(+field.value, 10) * 0.0016572) / 12) / 100.00);
-      fiber_millage.textContent = "$" + Response.formatCurrency(Results.fiber_millage);
-    }
-  };
-
-  Response = {
-    init: function () {
-      this.graph();
-      document.getElementById('projected-internet').addEventListener("change", Response.updateProjection);
-      document.getElementById('projected-internet').addEventListener("input", Response.updateProjection);
+      fiber_millage.textContent = "$" + Calculator.formatCurrency(Results.fiber_millage);
     },
 
     formatCurrency: function(val) {
@@ -268,8 +262,8 @@
         monthly_projection = projected_total - Results.fiber_millage;
 
       document.getElementById('projected-internet-display').value = "$" + document.getElementById('projected-internet').value;
-      Phase1.computeValues();
-      Response.graph();
+      Calculator.computeValues();
+      Calculator.graph();
     },
 
     graph: function () {
@@ -354,7 +348,7 @@
   };
 
 
-  Phase1.init();
+  Calculator.init();
 </script>
 </body>
 </html>
