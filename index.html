@@ -164,13 +164,13 @@
   Calculator = {
 
     init: function () {
+      var projected_internet = document.getElementById('projected-internet');
       this.values = document.querySelectorAll("#costs .service");
       this.projections = document.querySelectorAll("#costs .projection");
       this.taxable_value = document.querySelectorAll("#taxable_value");
       this.addListeners(this.values);
       this.addListeners(this.projections);
       this.addListeners(this.taxable_value);
-      var projected_internet = document.getElementById('projected-internet');
       projected_internet.addEventListener("change", Calculator.updateProjection);
       projected_internet.addEventListener("input", Calculator.updateProjection);
 
@@ -268,10 +268,7 @@
     graph: function () {
       var graph = document.getElementById("graph"),
         context = graph.getContext("2d"),
-        current,
-        projection,
         projectionRect,
-        millage,
         currentRect,
         millageRect,
         ymax,
@@ -304,6 +301,7 @@
         },
 
         measureRects = function (difference, projected_monthly, projected_total) {
+          var current, projection, millage;
           if (difference < 0) {
             ymax = Results.projected_total;
 
