@@ -167,12 +167,12 @@
       this.values = document.querySelectorAll("#costs .service");
       this.projections = document.querySelectorAll("#costs .projection");
       this.taxable_value = document.querySelectorAll("#taxable_value");
-      this.projected_internet = document.getElementById('projected-internet');
       this.addListeners(this.values);
       this.addListeners(this.projections);
       this.addListeners(this.taxable_value);
-      this.projected_internet.addEventListener("change", Calculator.updateProjection);
-      this.projected_internet.addEventListener("input", Calculator.updateProjection);
+      var projected_internet = document.getElementById('projected-internet');
+      projected_internet.addEventListener("change", Calculator.updateProjection);
+      projected_internet.addEventListener("input", Calculator.updateProjection);
 
       this.computeValues();
       Calculator.updateProjection();
