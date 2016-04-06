@@ -179,15 +179,15 @@
     },
 
     addListeners: function (values) {
-        var idx = 0;
-        while (idx < values.length) {
-          values[idx].addEventListener("keypress", this.procede);
-          values[idx].addEventListener("focus", this.procede);
-          values[idx].addEventListener("change", Calculator.updateProjection);
-          values[idx].addEventListener("keyup", this.wait);
-          idx += 1;
-        }
-      },
+      var idx = 0;
+      while (idx < values.length) {
+        values[idx].addEventListener("keypress", this.procede);
+        values[idx].addEventListener("focus", this.procede);
+        values[idx].addEventListener("change", Calculator.updateProjection);
+        values[idx].addEventListener("keyup", this.wait);
+        idx += 1;
+      }
+    },
 
     procede: function () {
       window.clearTimeout(window.delay);
@@ -278,7 +278,6 @@
         ymax,
         startTime,
 
-
         drawLegend = function (formatCurrency) {
           context.fillStyle = "#8C999E";
           context.fillRect(310, 100, 20, 20);
@@ -337,16 +336,13 @@
 
       drawLegend(this.formatCurrency);
       drawAxis(ymax);
-
     }
   };
-
 
   drawRectangle = function (myRectangle, context, color) {
     context.fillStyle = color;
     context.fillRect(myRectangle.x, myRectangle.y, myRectangle.w, myRectangle.h);
   };
-
 
   Calculator.init();
 </script>
