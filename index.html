@@ -131,8 +131,8 @@
           <tfoot>
             <tr>
               <th scope="row">Total</th>
-              <td><output data-name="monthly_total" id="current_monthly"></output></td>
-              <td><output data-name="projected_total" id="projected_monthly"></output></td>
+              <td><output data-name="current_monthly" id="current_monthly"></output></td>
+              <td><output data-name="projected_total" id="projected_total"></output></td>
             </tr>
           <tr>
             <th scope="row">Annual Savings</th>
@@ -161,38 +161,40 @@
 <script>
   Results = {};
 
-  Phase1 = {
+  Calculator = {
 
     init: function () {
+      var projected_internet = document.getElementById('projected-internet');
       this.values = document.querySelectorAll("#costs .service");
       this.projections = document.querySelectorAll("#costs .projection");
       this.taxable_value = document.querySelectorAll("#taxable_value");
       this.addListeners(this.values);
       this.addListeners(this.projections);
       this.addListeners(this.taxable_value);
+      projected_internet.addEventListener("change", Calculator.updateProjection);
+      projected_internet.addEventListener("input", Calculator.updateProjection);
 
       this.computeValues();
-      Response.init();
-      Response.updateProjection();
+      Calculator.updateProjection();
     },
 
     addListeners: function (values) {
-        var idx = 0;
-        while (idx < values.length) {
-          values[idx].addEventListener("keypress", this.procede);
-          values[idx].addEventListener("focus", this.procede);
-          values[idx].addEventListener("change", Response.updateProjection);
-          values[idx].addEventListener("keyup", this.wait);
-          idx += 1;
-        }
-      },
+      var idx = 0;
+      while (idx < values.length) {
+        values[idx].addEventListener("keypress", this.procede);
+        values[idx].addEventListener("focus", this.procede);
+        values[idx].addEventListener("change", Calculator.updateProjection);
+        values[idx].addEventListener("keyup", this.wait);
+        idx += 1;
+      }
+    },
 
     procede: function () {
       window.clearTimeout(window.delay);
     },
 
     wait: function () {
-      window.delay = window.setTimeout(Response.updateProjection, 500);
+      window.delay = window.setTimeout(Calculator.updateProjection, 500);
     },
 
     sum: function (values) {
@@ -211,44 +213,36 @@
     },
 
     computeValues: function () {
-      var values = Phase1.values,
-        projections = Phase1.projections,
-        monthly_total = document.getElementById("current_monthly"),
-        projected_total = document.getElementById("projected_monthly"),
-        annual_savings = document.getElementById('annual_savings');
+      var values = Calculator.values,
+        projections = Calculator.projections,
+        taxable_value = Calculator.taxable_value[0];
 
-      Phase1.computeTaxableValue();
+      Results.fiber_millage = Math.round(100 * (parseInt(+taxable_value.value, 10) * 0.0016572) / 12) / 100.00;
 
-      // monthly_projection is without millage
-      Results.monthly_projection = Phase1.sum(projections);
+      // projected_monthly is without millage
+      Results.projected_monthly = Calculator.sum(projections);
 
-      Results.monthly_total = Phase1.sum(values);
-      monthly_total.textContent = "$" + Results.monthly_total;
+      Results.current_monthly = Calculator.sum(values);
 
-      // projected_total is monthly_projection + fiber_millage
-      Results.projected_total = parseFloat(Results.monthly_projection) + parseFloat(Results.fiber_millage);
-      Results.projected_total = Response.formatCurrency(Math.round(Results.projected_total * 100) / 100);
-      projected_total.textContent = "$" + Results.projected_total;
+      // projected_total is projected_monthly + fiber_millage
+      Results.projected_total = parseFloat(Results.projected_monthly) + parseFloat(Results.fiber_millage);
+      Results.projected_total = Math.round(Results.projected_total * 100) / 100;
 
+      Results.annual_savings = parseFloat(12 * Results.current_monthly) - parseFloat(12 * Results.projected_total);
+      Results.annual_savings = Math.round(Results.annual_savings * 100) / 100;
 
-      Results.annual_savings = parseFloat(12 * Results.monthly_total) - parseFloat(12 * Results.projected_total);
-      Results.annual_savings = Response.formatCurrency(Math.round(Results.annual_savings * 100) / 100);
-      annual_savings.textContent = "$" + Results.annual_savings;
+      this.updateUIValues();
     },
 
-    computeTaxableValue: function () {
-      var fiber_millage = document.getElementById("fiber_millage"),
-        field = Phase1.taxable_value[0];
-      Results.fiber_millage = (Math.round(100 * (parseInt(+field.value, 10) * 0.0016572) / 12) / 100.00);
-      fiber_millage.textContent = "$" + Response.formatCurrency(Results.fiber_millage);
-    }
-  };
+    updateUIValues: function() {
+      for (var id in Results) {
+        var element = document.getElementById(id);
+        if (element) {
+          element.textContent = "$" + Calculator.formatCurrency(Results[id]);
+        }
+      }
 
-  Response = {
-    init: function () {
-      this.graph();
-      document.getElementById('projected-internet').addEventListener("change", Response.updateProjection);
-      document.getElementById('projected-internet').addEventListener("input", Response.updateProjection);
+      document.getElementById('projected-internet-display').value = "$" + document.getElementById('projected-internet').value;
     },
 
     formatCurrency: function(val) {
@@ -265,38 +259,33 @@
 
     updateProjection: function (event) {
       var projected_total = (Results.projected_total - Results.projected_internet + parseInt(this.value, 10)),
-        monthly_projection = projected_total - Results.fiber_millage;
+        projected_monthly = projected_total - Results.fiber_millage;
 
-      document.getElementById('projected-internet-display').value = "$" + document.getElementById('projected-internet').value;
-      Phase1.computeValues();
-      Response.graph();
+      Calculator.computeValues();
+      Calculator.graph();
     },
 
     graph: function () {
       var graph = document.getElementById("graph"),
         context = graph.getContext("2d"),
-        current,
-        projection,
         projectionRect,
-        millage,
         currentRect,
         millageRect,
         ymax,
         startTime,
 
-
         drawLegend = function (formatCurrency) {
           context.fillStyle = "#8C999E";
-          context.fillRect(310, 100, 20, 20);
+          context.fillRect(280, 100, 20, 20);
           context.fillStyle = "#296BB0";
-          context.fillRect(310, 60, 20, 20);
+          context.fillRect(280, 60, 20, 20);
           context.fillStyle = "#A6D15E";
-          context.fillRect(310, 20, 20, 20);
+          context.fillRect(280, 20, 20, 20);
           context.font= "normal 12px 'Ubuntu Mono', 'Roboto Mono', 'Segoe Mono', Consolas, Menlo, monospace";
           context.fillStyle = "#666";
-          context.fillText("$" + formatCurrency(Results.fiber_millage) + " Fiber Millage", 340, 35);
-          context.fillText("$" + formatCurrency(Results.monthly_projection) + " Future Monthly Services", 340, 75);
-          context.fillText("$" + formatCurrency(Results.monthly_total) + " Current Monthly Services", 340, 115);
+          context.fillText("$" + formatCurrency(Results.fiber_millage) + " Fiber Millage", 310, 35);
+          context.fillText("$" + formatCurrency(Results.projected_monthly) + " Future Monthly Services", 310, 75);
+          context.fillText("$" + formatCurrency(Results.current_monthly) + " Current Monthly Services", 310, 115);
         },
         drawAxis = function () {
           context.fillStyle = "#666";
@@ -311,20 +300,21 @@
           context.fillText("$" + Math.floor(ymax), 0, 13);
         },
 
-        measureRects = function (difference, monthly_projection, projected_total) {
+        measureRects = function (difference, projected_monthly, projected_total) {
+          var current, projection, millage;
           if (difference < 0) {
             ymax = Results.projected_total;
 
-            current = 300 * (Results.monthly_total / ymax);
-            projection = 300 * (monthly_projection / ymax)
+            current = 300 * (Results.current_monthly / ymax);
+            projection = 300 * (projected_monthly / ymax)
             millage = 300 * (Results.fiber_millage / ymax)
 
             currentRect = {x: 40, y: 300, w: 80, h: -current};
             millageRect = {x: 160, y: 300 - projection, w: 80, h: -millage};
 
           } else {
-            ymax = Results.monthly_total;
-            projection = 300 * (monthly_projection / ymax)
+            ymax = Results.current_monthly;
+            projection = 300 * (projected_monthly / ymax)
             millage = Results.fiber_millage / ymax;
 
             currentRect = {x: 40, y: 300, w: 80, h: -300};
@@ -339,22 +329,19 @@
         };
 
       context.clearRect(0,0,535,300);
-      measureRects(Results.monthly_total - Results.projected_total, Results.monthly_projection, Results.projected_total);
+      measureRects(Results.current_monthly - Results.projected_total, Results.projected_monthly, Results.projected_total);
 
       drawLegend(this.formatCurrency);
       drawAxis(ymax);
-
     }
   };
-
 
   drawRectangle = function (myRectangle, context, color) {
     context.fillStyle = color;
     context.fillRect(myRectangle.x, myRectangle.y, myRectangle.w, myRectangle.h);
   };
 
-
-  Phase1.init();
+  Calculator.init();
 </script>
 </body>
 </html>
