@@ -131,8 +131,8 @@
           <tfoot>
             <tr>
               <th scope="row">Total</th>
-              <td><output data-name="monthly_total" id="current_monthly"></output></td>
-              <td><output data-name="projected_total" id="projected_monthly"></output></td>
+              <td><output data-name="current_monthly" id="current_monthly"></output></td>
+              <td><output data-name="projected_total" id="projected_total"></output></td>
             </tr>
           <tr>
             <th scope="row">Annual Savings</th>
@@ -214,35 +214,37 @@
 
     computeValues: function () {
       var values = Calculator.values,
-        projections = Calculator.projections,
-        monthly_total = document.getElementById("current_monthly"),
-        projected_total = document.getElementById("projected_monthly"),
-        annual_savings = document.getElementById('annual_savings');
+        projections = Calculator.projections;
 
       Calculator.computeTaxableValue();
 
-      // monthly_projection is without millage
-      Results.monthly_projection = Calculator.sum(projections);
+      // projected_monthly is without millage
+      Results.projected_monthly = Calculator.sum(projections);
 
-      Results.monthly_total = Calculator.sum(values);
-      monthly_total.textContent = "$" + Results.monthly_total;
+      Results.current_monthly = Calculator.sum(values);
 
-      // projected_total is monthly_projection + fiber_millage
-      Results.projected_total = parseFloat(Results.monthly_projection) + parseFloat(Results.fiber_millage);
-      Results.projected_total = Calculator.formatCurrency(Math.round(Results.projected_total * 100) / 100);
-      projected_total.textContent = "$" + Results.projected_total;
+      // projected_total is projected_monthly + fiber_millage
+      Results.projected_total = parseFloat(Results.projected_monthly) + parseFloat(Results.fiber_millage);
+      Results.projected_total = Math.round(Results.projected_total * 100) / 100;
 
+      Results.annual_savings = parseFloat(12 * Results.current_monthly) - parseFloat(12 * Results.projected_total);
+      Results.annual_savings = Math.round(Results.annual_savings * 100) / 100;
 
-      Results.annual_savings = parseFloat(12 * Results.monthly_total) - parseFloat(12 * Results.projected_total);
-      Results.annual_savings = Calculator.formatCurrency(Math.round(Results.annual_savings * 100) / 100);
-      annual_savings.textContent = "$" + Results.annual_savings;
+      this.updateUIValues();
+    },
+
+    updateUIValues: function() {
+      for (var id in Results) {
+        var element = document.getElementById(id);
+        if (element) {
+          element.textContent = "$" + Calculator.formatCurrency(Results[id]);
+        }
+      }
     },
 
     computeTaxableValue: function () {
-      var fiber_millage = document.getElementById("fiber_millage"),
-        field = Calculator.taxable_value[0];
+      var field = Calculator.taxable_value[0];
       Results.fiber_millage = (Math.round(100 * (parseInt(+field.value, 10) * 0.0016572) / 12) / 100.00);
-      fiber_millage.textContent = "$" + Calculator.formatCurrency(Results.fiber_millage);
     },
 
     formatCurrency: function(val) {
@@ -259,7 +261,7 @@
 
     updateProjection: function (event) {
       var projected_total = (Results.projected_total - Results.projected_internet + parseInt(this.value, 10)),
-        monthly_projection = projected_total - Results.fiber_millage;
+        projected_monthly = projected_total - Results.fiber_millage;
 
       document.getElementById('projected-internet-display').value = "$" + document.getElementById('projected-internet').value;
       Calculator.computeValues();
@@ -288,8 +290,8 @@
           context.font= "normal 12px 'Ubuntu Mono', 'Roboto Mono', 'Segoe Mono', Consolas, Menlo, monospace";
           context.fillStyle = "#666";
           context.fillText("$" + formatCurrency(Results.fiber_millage) + " Fiber Millage", 340, 35);
-          context.fillText("$" + formatCurrency(Results.monthly_projection) + " Future Monthly Services", 340, 75);
-          context.fillText("$" + formatCurrency(Results.monthly_total) + " Current Monthly Services", 340, 115);
+          context.fillText("$" + formatCurrency(Results.projected_monthly) + " Future Monthly Services", 340, 75);
+          context.fillText("$" + formatCurrency(Results.current_monthly) + " Current Monthly Services", 340, 115);
         },
         drawAxis = function () {
           context.fillStyle = "#666";
@@ -304,20 +306,20 @@
           context.fillText("$" + Math.floor(ymax), 0, 13);
         },
 
-        measureRects = function (difference, monthly_projection, projected_total) {
+        measureRects = function (difference, projected_monthly, projected_total) {
           if (difference < 0) {
             ymax = Results.projected_total;
 
-            current = 300 * (Results.monthly_total / ymax);
-            projection = 300 * (monthly_projection / ymax)
+            current = 300 * (Results.current_monthly / ymax);
+            projection = 300 * (projected_monthly / ymax)
             millage = 300 * (Results.fiber_millage / ymax)
 
             currentRect = {x: 40, y: 300, w: 80, h: -current};
             millageRect = {x: 160, y: 300 - projection, w: 80, h: -millage};
 
           } else {
-            ymax = Results.monthly_total;
-            projection = 300 * (monthly_projection / ymax)
+            ymax = Results.current_monthly;
+            projection = 300 * (projected_monthly / ymax)
             millage = Results.fiber_millage / ymax;
 
             currentRect = {x: 40, y: 300, w: 80, h: -300};
@@ -332,7 +334,7 @@
         };
 
       context.clearRect(0,0,535,300);
-      measureRects(Results.monthly_total - Results.projected_total, Results.monthly_projection, Results.projected_total);
+      measureRects(Results.current_monthly - Results.projected_total, Results.projected_monthly, Results.projected_total);
 
       drawLegend(this.formatCurrency);
       drawAxis(ymax);
