@@ -245,23 +245,16 @@
       for (var id in Results) {
         var element = document.getElementById(id);
         if (element) {
-          element.textContent = "$" + Calculator.formatCurrency(Results[id]);
+          element.textContent = Calculator.formatCurrency(Results[id]);
         }
       }
 
       document.getElementById('projected-internet-display').value = "$" + document.getElementById('projected-internet').value;
     },
 
-    formatCurrency: function(val) {
-      var val = val.toString(),
-        pattern = /^\d+\.(\d{1,2})$/,
-        precision = pattern.exec(val);
-      if (precision !== null && precision.length === 2) {
-        if (precision[1].length === 1) {
-          return val + "0";
-        }
-      }
-      return val;
+    formatCurrency: function(n) {
+      n = parseFloat(n);
+      return "$" + n.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
     },
 
     updateProjection: function (event) {
