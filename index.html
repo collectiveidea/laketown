@@ -197,12 +197,19 @@
       window.delay = window.setTimeout(Calculator.updateProjection, 500);
     },
 
+    parseNumber: function (number) {
+      if ((typeof number === 'string' || number instanceof String) && number.length) {
+        return parseFloat(number.replace(/[^\d|\.]/g, ""));
+      }
+      return parseFloat(+number);
+    },
+
     sum: function (values) {
       var idx = 0,
         total = 0;
       while (idx < values.length) {
         if (values[idx].value) {
-          total += parseInt(+values[idx].value, 10);
+          total += Calculator.parseNumber(values[idx].value);
           Results[values[idx].getAttribute('name')] = values[idx].value;
         } else {
           Results[values[idx].getAttribute('name')] = 0;
@@ -217,7 +224,7 @@
         projections = Calculator.projections,
         taxable_value = Calculator.taxable_value[0];
 
-      Results.fiber_millage = Math.round(100 * (parseInt(+taxable_value.value, 10) * 0.0016572) / 12) / 100.00;
+      Results.fiber_millage = Math.round(100 * (Calculator.parseNumber(taxable_value.value) * 0.0016572) / 12) / 100.00;
 
       // projected_monthly is without millage
       Results.projected_monthly = Calculator.sum(projections);
@@ -225,10 +232,10 @@
       Results.current_monthly = Calculator.sum(values);
 
       // projected_total is projected_monthly + fiber_millage
-      Results.projected_total = parseFloat(Results.projected_monthly) + parseFloat(Results.fiber_millage);
+      Results.projected_total = Calculator.parseNumber(Results.projected_monthly) + Calculator.parseNumber(Results.fiber_millage);
       Results.projected_total = Math.round(Results.projected_total * 100) / 100;
 
-      Results.annual_savings = parseFloat(12 * Results.current_monthly) - parseFloat(12 * Results.projected_total);
+      Results.annual_savings = Calculator.parseNumber(12 * Results.current_monthly) - Calculator.parseNumber(12 * Results.projected_total);
       Results.annual_savings = Math.round(Results.annual_savings * 100) / 100;
 
       this.updateUIValues();
