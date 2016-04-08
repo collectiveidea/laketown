@@ -1,4 +1,5 @@
 # Laketown Fiber Calculator
+[![Build Status](https://travis-ci.org/collectiveidea/laketown.svg?branch=master)](https://travis-ci.org/collectiveidea/laketown)
 
 Laketown Township, Michigan is voting to build a state-of-the-art fiber optic network to every home. With it will come a small millage and cheap access to 100-120 Mbps broadband and inexpensive TV & Phone service too.
 
