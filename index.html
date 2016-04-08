@@ -288,6 +288,26 @@
         ymax,
         startTime,
 
+        backingScale = function (context) {
+          if ('devicePixelRatio' in window) {
+            if (window.devicePixelRatio > 1) {
+              return window.devicePixelRatio;
+            }
+          }
+          return 1;
+        },
+
+        setScaleFactor = function(canvas, context) {
+          var scaleFactor = backingScale(context);
+
+          if (scaleFactor > 1) {
+            canvas.width = canvas.width * scaleFactor;
+            canvas.height = canvas.height * scaleFactor;
+            // update the context for the new canvas scale
+            var context = canvas.getContext("2d");
+          }
+        },
+
         drawLegend = function (formatCurrency) {
           context.fillStyle = "#8C999E";
           context.fillRect(40, 400, 20, 20);
@@ -342,6 +362,7 @@
           drawRectangle(projectionRect, context, "#296BB0");
         };
 
+      setScaleFactor(graph, context);
       context.clearRect(0,0,335,450);
       measureRects(Results.current_monthly - Results.projected_total, Results.projected_monthly, Results.projected_total);
 
