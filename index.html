@@ -1,8 +1,10 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <title>How much will fiber cost me?</title>
   <meta charset="utf-8">
+  <title>How much will fiber cost me?</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+
   <style>
     #laketown-calculator {
       font: normal 18px Ubuntu, Roboto, "Segoe UI", Myriad, Lucida, sans-serif;
@@ -83,6 +85,21 @@
       margin: 1em auto;
     }
 
+    @media screen and (max-width: 750px) {
+      input, table {
+        font-size: 16px;
+      }
+      figure {
+        margin-right: auto;
+        margin-left: auto;
+      }
+    }
+@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-resolution: 200dpi) {
+  canvas {
+    width: 335px;
+    height: 450px;
+  }
+}
   </style>
 </head>
 
@@ -281,37 +298,64 @@
 
     graph: function () {
       var graph = document.getElementById("graph"),
-        context = graph.getContext("2d"),
         projectionRect,
         currentRect,
         millageRect,
         ymax,
         startTime,
 
+        backingScale = function (pixels) {
+          if ('devicePixelRatio' in window) {
+            if (window.devicePixelRatio > 1) {
+              return window.devicePixelRatio * pixels;
+            }
+          }
+          return pixels;
+        },
+
+        setScaleFactor = function(canvas) {
+          var scaleFactor = backingScale(1);
+
+          if (1 < scaleFactor) {
+            canvas.width = canvas.width * scaleFactor;
+            canvas.height = canvas.height * scaleFactor;
+          }
+          // update the context for the new canvas scale
+          return context = canvas.getContext("2d");
+        },
+
+        context = setScaleFactor(graph),
+
+        drawRectangle = function (myRectangle, context, color) {
+          context.fillStyle = color;
+          context.fillRect(
+            backingScale(myRectangle.x),
+            backingScale(myRectangle.y),
+            backingScale(myRectangle.w),
+            backingScale(myRectangle.h));
+        },
+
         drawLegend = function (formatCurrency) {
-          context.fillStyle = "#8C999E";
-          context.fillRect(40, 400, 20, 20);
-          context.fillStyle = "#296BB0";
-          context.fillRect(40, 360, 20, 20);
-          context.fillStyle = "#A6D15E";
-          context.fillRect(40, 320, 20, 20);
-          context.font= "normal 12px 'Ubuntu Mono', 'Roboto Mono', 'Segoe Mono', Consolas, Menlo, monospace";
+          drawRectangle({x: 40, y: 400, w: 20, h: 20}, context, "#8c999e");
+          drawRectangle({x: 40, y: 360, w: 20, h: 20}, context, "#296bb0");
+          drawRectangle({x: 40, y: 320, w: 20, h: 20}, context, "#a6d15e");
+          context.font= "normal " + backingScale(12) + "px 'Ubuntu Mono', 'Roboto Mono', 'Segoe Mono', Consolas, Menlo, monospace";
           context.fillStyle = "#666";
-          context.fillText(formatCurrency(Results.fiber_millage) + " Fiber Millage", 70, 335);
-          context.fillText(formatCurrency(Results.projected_monthly) + " Future Monthly Services", 70, 375);
-          context.fillText(formatCurrency(Results.current_monthly) + " Current Monthly Services", 70, 415);
+          context.fillText(formatCurrency(Results.fiber_millage) + " Fiber Millage", backingScale(70), backingScale(335));
+          context.fillText(formatCurrency(Results.projected_monthly) + " Future Monthly Services", backingScale(70), backingScale(375));
+          context.fillText(formatCurrency(Results.current_monthly) + " Current Monthly Services", backingScale(70), backingScale(415));
         },
         drawAxis = function () {
           context.fillStyle = "#666";
-          context.fillText("$0", 0, 300);
-          context.moveTo(25, 0);
-          context.lineTo(30.5, 0);
-          context.lineTo(30.5, 300);
-          context.moveTo(25, 300);
-          context.lineTo(300, 300);
+          context.fillText("$0", 0, backingScale(300));
+          context.moveTo(backingScale(25), 0);
+          context.lineTo(backingScale(30.5), 0);
+          context.lineTo(backingScale(30.5), backingScale(300));
+          context.moveTo(backingScale(25), backingScale(300));
+          context.lineTo(backingScale(300), backingScale(300));
           context.strokeStyle = "#ccc";
           context.stroke();
-          context.fillText("$" + Math.floor(ymax), 0, 13);
+          context.fillText("$" + Math.floor(ymax), 0, backingScale(13));
         },
 
         measureRects = function (difference, projected_monthly, projected_total) {
@@ -342,17 +386,12 @@
           drawRectangle(projectionRect, context, "#296BB0");
         };
 
-      context.clearRect(0,0,335,450);
+      context.clearRect(0,0,backingScale(335), backingScale(450));
       measureRects(Results.current_monthly - Results.projected_total, Results.projected_monthly, Results.projected_total);
 
       drawLegend(this.formatCurrency);
       drawAxis(ymax);
     }
-  };
-
-  drawRectangle = function (myRectangle, context, color) {
-    context.fillStyle = color;
-    context.fillRect(myRectangle.x, myRectangle.y, myRectangle.w, myRectangle.h);
   };
 
   Calculator.init();
