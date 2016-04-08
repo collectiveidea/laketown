@@ -6,6 +6,10 @@ This calculator helps residents see how much they can save.
 
 Originally published at [http://www.hollandfiber.org/laketown/](http://www.hollandfiber.org/laketown/)
 
+## Details
+
+Everything is self-contained in [./index.html](index.html). If you want to drop it into another site, just take out the `<head>` and `<body>` tags (keeping the `<style>`).
+
 ## Running Tests
 
 Install casperjs
