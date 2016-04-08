@@ -284,9 +284,9 @@
           context.fillRect(280, 20, 20, 20);
           context.font= "normal 12px 'Ubuntu Mono', 'Roboto Mono', 'Segoe Mono', Consolas, Menlo, monospace";
           context.fillStyle = "#666";
-          context.fillText("$" + formatCurrency(Results.fiber_millage) + " Fiber Millage", 310, 35);
-          context.fillText("$" + formatCurrency(Results.projected_monthly) + " Future Monthly Services", 310, 75);
-          context.fillText("$" + formatCurrency(Results.current_monthly) + " Current Monthly Services", 310, 115);
+          context.fillText(formatCurrency(Results.fiber_millage) + " Fiber Millage", 310, 35);
+          context.fillText(formatCurrency(Results.projected_monthly) + " Future Monthly Services", 310, 75);
+          context.fillText(formatCurrency(Results.current_monthly) + " Current Monthly Services", 310, 115);
         },
         drawAxis = function () {
           context.fillStyle = "#666";
