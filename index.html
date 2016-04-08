@@ -84,7 +84,7 @@
     figcaption {
       margin: 1em auto;
     }
-    
+
     @media screen and (max-width: 750px) {
       input, table {
         font-size: 16px;
@@ -317,7 +317,6 @@
           var scaleFactor = backingScale(1);
 
           if (1 < scaleFactor) {
-            debugger;
             canvas.width = canvas.width * scaleFactor;
             canvas.height = canvas.height * scaleFactor;
           }
@@ -330,12 +329,12 @@
         drawRectangle = function (myRectangle, context, color) {
           context.fillStyle = color;
           context.fillRect(
-            backingScale(myRectangle.x), 
-            backingScale(myRectangle.y), 
-            backingScale(myRectangle.w), 
+            backingScale(myRectangle.x),
+            backingScale(myRectangle.y),
+            backingScale(myRectangle.w),
             backingScale(myRectangle.h));
         },
-        
+
         drawLegend = function (formatCurrency) {
           drawRectangle({x: 40, y: 400, w: 20, h: 20}, context, "#8c999e");
           drawRectangle({x: 40, y: 360, w: 20, h: 20}, context, "#296bb0");
