@@ -317,6 +317,7 @@
           var scaleFactor = backingScale(1);
 
           if (1 < scaleFactor) {
+            debugger;
             canvas.width = canvas.width * scaleFactor;
             canvas.height = canvas.height * scaleFactor;
           }
@@ -386,7 +387,6 @@
           drawRectangle(projectionRect, context, "#296BB0");
         };
 
-      context = setScaleFactor(graph, context);
       context.clearRect(0,0,backingScale(335), backingScale(450));
       measureRects(Results.current_monthly - Results.projected_total, Results.projected_monthly, Results.projected_total);
 
