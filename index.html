@@ -303,9 +303,9 @@
           if (scaleFactor > 1) {
             canvas.width = canvas.width * scaleFactor;
             canvas.height = canvas.height * scaleFactor;
-            // update the context for the new canvas scale
-            var context = canvas.getContext("2d");
           }
+          // update the context for the new canvas scale
+          return context = canvas.getContext("2d");
         },
 
         drawLegend = function (formatCurrency) {
@@ -362,7 +362,7 @@
           drawRectangle(projectionRect, context, "#296BB0");
         };
 
-      setScaleFactor(graph, context);
+      context = setScaleFactor(graph, context);
       context.clearRect(0,0,335,450);
       measureRects(Results.current_monthly - Results.projected_total, Results.projected_monthly, Results.projected_total);
 
