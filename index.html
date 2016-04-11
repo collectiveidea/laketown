@@ -1,13 +1,5 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>How much will fiber cost me?</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-
   <style>
     #laketown-calculator {
-      font: normal 18px Ubuntu, Roboto, "Segoe UI", Myriad, Lucida, sans-serif;
       max-width: 1024px;
       margin: auto;
       text-align: center;
@@ -62,6 +54,14 @@
       font-family: inherit;
       text-align: right;
     }
+    input[type="number"][size="6"] {
+      width: 4em;
+      width: 6ch;
+    }
+    input[type="number"][size="5"] {
+      width: 3em;
+      width: 5ch;
+    }
     .note {
       color: #aaa;
       font-size: 80%;
@@ -85,7 +85,6 @@
     figcaption {
       margin: 1em auto;
     }
-
     @media screen and (max-width: 750px) {
       input, table {
         font-size: 16px;
@@ -105,12 +104,8 @@
   }
 }
   </style>
-</head>
 
-<body>
   <div id="laketown-calculator" class="container">
-    <h1>Laketown Fiber</h1>
-
     <p>Laketown Township <a href="http://www.laketowntwp.org/news-you-can-use/laketown-gig/">votes on May 3rd</a> to build a state-of-the-art fiber optic network to every home. With it will come a small millage and cheap access to 100-120 <abbr title="Megabits per second">Mbps</abbr> broadband and inexpensive TV & Phone service too. Use the calculator below to see how much you could save!</p>
 
     <div class="phase" id="results">
@@ -121,7 +116,7 @@
             <tr>
               <th scope="row">Taxable Value</th>
               <td>
-                $ <input type="numeric" inputmode="number" name="taxable_value" size="6" id="taxable_value" value="100000">
+                $ <input type="number" inputmode="numeric" name="taxable_value" size="6" id="taxable_value" value="100000">
               </td>
             </tr>
           </tbody>
@@ -140,19 +135,19 @@
           <tbody>
             <tr>
               <th scope="row">Internet<sup><a href="#bundles">2</a></sup></th>
-              <td>$ <input type="numeric" size="5" inputmode="number" name="internet" id="internet" class="service" value="75"></td>
+              <td>$ <input type="number" size="5" inputmode="numeric" name="internet" id="internet" class="service" value="75"></td>
               <td>
                 <input type="range" min="25" max="40" value="32" id="projected-internet" class="projection" name="projected_internet">
                 <output data-name="projected_internet" id="projected-internet-display">$32</output><sup><a href="#fiber-cost">3</a></sup>
               </td>
             </tr><tr>
               <th scope="row">Phone<sup><a href="#phone-cost">4</a></sup></th>
-              <td>$ <input type="numeric" size="5" inputmode="number" name="phone" id="phone" class="service" value="40"></td>
-              <td>$ <input type="numeric" size="5" inputmode="number" name="projected_phone" id="projected-phone" class="projection" value="9"></td>
+              <td>$ <input type="number" size="5" inputmode="numeric" name="phone" id="phone" class="service" value="40"></td>
+              <td>$ <input type="number" size="5" inputmode="numeric" name="projected_phone" id="projected-phone" class="projection" value="9"></td>
             </tr><tr>
               <th scope="row">TV/Video<sup><a href="#video-cost">5</a></sup></th>
-              <td>$ <input type="numeric" size="5" inputmode="number" name="video" id="video" class="service" value="25"></td>
-              <td>$ <input type="numeric" size="5" inputmode="number" name="projected_video" id="projected-video" class="projection" value="25"></td>
+              <td>$ <input type="number" size="5" inputmode="numeric" name="video" id="video" class="service" value="25"></td>
+              <td>$ <input type="number" size="5" inputmode="numeric" name="projected_video" id="projected-video" class="projection" value="25"></td>
             </tr>
             <tr>
               <th scope="row">Fiber Millage</th>
@@ -333,12 +328,12 @@
         drawRectangle = function (myRectangle, context, color) {
           context.fillStyle = color;
           context.fillRect(
-            backingScale(myRectangle.x),
-            backingScale(myRectangle.y),
-            backingScale(myRectangle.w),
+            backingScale(myRectangle.x), 
+            backingScale(myRectangle.y), 
+            backingScale(myRectangle.w), 
             backingScale(myRectangle.h));
         },
-
+        
         drawLegend = function (formatCurrency) {
           drawRectangle({x: 40, y: 400, w: 20, h: 20}, context, "#8c999e");
           drawRectangle({x: 40, y: 360, w: 20, h: 20}, context, "#296bb0");
@@ -400,5 +395,3 @@
 
   Calculator.init();
 </script>
-</body>
-</html>
