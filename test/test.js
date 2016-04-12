@@ -132,7 +132,7 @@ casper.test.begin("Works with blank fields", 4, function suite(test) {
   });
 });
 
-casper.test.begin("Works with non-numbers", 4, function suite(test) {
+casper.test.begin("Works with non-numbers", 2, function suite(test) {
 
   casper.start(page, function() {
     this.fill('form', {
@@ -146,10 +146,8 @@ casper.test.begin("Works with non-numbers", 4, function suite(test) {
   });
 
   casper.then(function() {
-    test.assertSelectorHasText('td [data-name="current_monthly"]', '$40');
-    test.assertSelectorHasText('td [data-name="projected_total"]', '$38.91');
-    test.assertSelectorHasText('td [data-name="fiber_millage"]', '$6.91');
-    test.assertSelectorHasText('td [data-name="annual_savings"]', '$13.08');
+    test.assertField('video', '');
+    test.assertField('taxable_value', '')
   });
 
   casper.run(function() {
