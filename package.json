@@ -17,6 +17,6 @@
   },
   "homepage": "https://github.com/collectiveidea/laketown",
   "devDependencies": {
-    "casperjs": "^1.1.0-beta4"
+    "casperjs": "^1.1.4"
   }
 }

@@ -112,7 +112,7 @@
   </style>
 
   <div id="laketown-calculator" class="container">
-    <p>Laketown Township <a href="http://www.laketowntwp.org/news-you-can-use/laketown-gig/">votes on May 3rd</a> to build a state-of-the-art fiber optic network to every home. With it will come a small millage and cheap access to 100-120 <abbr title="Megabits per second">Mbps</abbr> broadband and inexpensive TV & Phone service too. Use the calculator below to see how much you could save!</p>
+    <p>The City of Holland may propose a small millage to build a state-of-the-art gigabit fiber optic network to every home. Use the calculator below to see how much you could save!</p>
 
     <div class="phase" id="results">
       <form action="#results" id="costs" data-phase="phase1">
@@ -122,7 +122,7 @@
             <tr>
               <th scope="row">Taxable Value</th>
               <td>
-                $ <input type="number" inputmode="numeric" name="taxable_value" size="6" id="taxable_value" value="100000">
+                $ <input type="number" inputmode="numeric" name="taxable_value" size="6" id="taxable_value" value="65000">
               </td>
             </tr>
           </tbody>
@@ -141,19 +141,19 @@
           <tbody>
             <tr>
               <th scope="row">Internet<sup><a href="#bundles">2</a></sup></th>
-              <td>$ <input type="number" size="5" inputmode="numeric" name="internet" id="internet" class="service" value="75"></td>
+              <td>$ <input type="number" size="5" inputmode="numeric" name="internet" id="internet" class="service" value="55"></td>
               <td>
-                <input type="range" min="25" max="40" value="32" id="projected-internet" class="projection" name="projected_internet">
-                <output data-name="projected_internet" id="projected-internet-display">$32</output><sup><a href="#fiber-cost">3</a></sup>
+                <input type="range" min="25" max="40" value="30" id="projected-internet" class="projection" name="projected_internet">
+                <output data-name="projected_internet" id="projected-internet-display">$30</output><sup><a href="#fiber-cost">3</a></sup>
               </td>
             </tr><tr>
               <th scope="row">Phone<sup><a href="#phone-cost">4</a></sup></th>
-              <td>$ <input type="number" size="5" inputmode="numeric" name="phone" id="phone" class="service" value="40"></td>
-              <td>$ <input type="number" size="5" inputmode="numeric" name="projected_phone" id="projected-phone" class="projection" value="9"></td>
+              <td>$ <input type="number" size="5" inputmode="numeric" name="phone" id="phone" class="service" value="0"></td>
+              <td>$ <input type="number" size="5" inputmode="numeric" name="projected_phone" id="projected-phone" class="projection" value="0"></td>
             </tr><tr>
               <th scope="row">TV/Video<sup><a href="#video-cost">5</a></sup></th>
-              <td>$ <input type="number" size="5" inputmode="numeric" name="video" id="video" class="service" value="25"></td>
-              <td>$ <input type="number" size="5" inputmode="numeric" name="projected_video" id="projected-video" class="projection" value="25"></td>
+              <td>$ <input type="number" size="5" inputmode="numeric" name="video" id="video" class="service" value="0"></td>
+              <td>$ <input type="number" size="5" inputmode="numeric" name="projected_video" id="projected-video" class="projection" value="0"></td>
             </tr>
             <tr>
               <th scope="row">Fiber Millage</th>
@@ -185,13 +185,10 @@
 
     <p class="call-to-action">Ready to help the campaign? Head to the <a href="http://laketownfiberopticyes.com">Fiber Optic YES!</a> website or <a href="http://facebook.com/Laketown-Fiber-Optic-YES-1801402866754094/">Facebook Page</a></a>
 
-    <p class="note" id="taxable-lookup"><sup>1</sup> Don’t know your taxable value? No problem. You can find it by calling the township at <a href="tel:+16163353050" class="tel">(616) 335-3050</a>
-      or visiting the <a href="https://allegancounty.is.bsasoftware.com/bsa.is/TaxServices/ServiceTaxSearch.aspx?i=3&appid=1&unit=380">Allegan County website</a> and searching for your address.
+    <p class="note" id="taxable-lookup"><sup>1</sup> Don’t know your taxable value? No problem. You can find it on the <a href="https://bsaonline.com/Home/Index?uid=116">City website</a> and searching for your address.
     </p>
     <p class="note" id="bundles"><sup>2</sup> If you have a bundled plan including internet with phone, or video, just fill in the internet field.</p>
     <p class="note" id="fiber-cost"><sup>3</sup> $25–40 is the projected monthly cost of 100–120 <abbr title="Megabits per second">Mbps</abbr> broadband internet in the Laketown plan. The more people who sign up, the lower the cost.</p>
-    <p class="note" id="phone-cost"><sup>4</sup> Landline phones start at $40 for most residents. Switching to an internet-based phone provider like Vonage or magicJack can be $9/month or less.</p>
-    <p class="note" id="video-cost"><sup>5</sup> Estimates based on average basic cable package.</p>
 
   </div>
 <script>
@@ -260,7 +257,7 @@
         projections = Calculator.projections,
         taxable_value = Calculator.taxable_value[0];
 
-      Results.fiber_millage = Math.round(100 * (Calculator.parseNumber(taxable_value.value) * 0.0016572) / 12) / 100.00;
+      Results.fiber_millage = Math.round(100 * (Calculator.parseNumber(taxable_value.value) * 0.0013) / 12) / 100.00;
 
       // projected_monthly is without millage
       Results.projected_monthly = Calculator.sum(projections);
@@ -284,7 +281,6 @@
           element.textContent = Calculator.formatCurrency(Results[id]);
         }
       }
-
       document.getElementById('projected-internet-display').value = "$" + document.getElementById('projected-internet').value;
     },
 
@@ -334,12 +330,12 @@
         drawRectangle = function (myRectangle, context, color) {
           context.fillStyle = color;
           context.fillRect(
-            backingScale(myRectangle.x), 
-            backingScale(myRectangle.y), 
-            backingScale(myRectangle.w), 
+            backingScale(myRectangle.x),
+            backingScale(myRectangle.y),
+            backingScale(myRectangle.w),
             backingScale(myRectangle.h));
         },
-        
+
         drawLegend = function (formatCurrency) {
           drawRectangle({x: 40, y: 400, w: 20, h: 20}, context, "#8c999e");
           drawRectangle({x: 40, y: 360, w: 20, h: 20}, context, "#296bb0");
