@@ -141,19 +141,11 @@
           <tbody>
             <tr>
               <th scope="row">Internet<sup><a href="#bundles">2</a></sup></th>
-              <td>$ <input type="number" size="5" inputmode="numeric" name="internet" id="internet" class="service" value="55"></td>
+              <td>$ <input type="number" size="5" inputmode="numeric" name="internet" id="internet" class="service" value="85"></td>
               <td>
-                <input type="range" min="25" max="40" value="30" id="projected-internet" class="projection" name="projected_internet">
-                <output data-name="projected_internet" id="projected-internet-display">$30</output><sup><a href="#fiber-cost">3</a></sup>
+                <input type="range" min="30" max="50" value="42" id="projected-internet" class="projection" name="projected_internet">
+                <output data-name="projected_internet" id="projected-internet-display">$42</output><sup><a href="#fiber-cost">3</a></sup>
               </td>
-            </tr><tr>
-              <th scope="row">Phone<sup><a href="#phone-cost">4</a></sup></th>
-              <td>$ <input type="number" size="5" inputmode="numeric" name="phone" id="phone" class="service" value="0"></td>
-              <td>$ <input type="number" size="5" inputmode="numeric" name="projected_phone" id="projected-phone" class="projection" value="0"></td>
-            </tr><tr>
-              <th scope="row">TV/Video<sup><a href="#video-cost">5</a></sup></th>
-              <td>$ <input type="number" size="5" inputmode="numeric" name="video" id="video" class="service" value="0"></td>
-              <td>$ <input type="number" size="5" inputmode="numeric" name="projected_video" id="projected-video" class="projection" value="0"></td>
             </tr>
             <tr>
               <th scope="row">Fiber Millage</th>
@@ -257,7 +249,7 @@
         projections = Calculator.projections,
         taxable_value = Calculator.taxable_value[0];
 
-      Results.fiber_millage = Math.round(100 * (Calculator.parseNumber(taxable_value.value) * 0.0013) / 12) / 100.00;
+      Results.fiber_millage = Math.round(100 * (Calculator.parseNumber(taxable_value.value) * 0.0015) / 12) / 100.00;
 
       // projected_monthly is without millage
       Results.projected_monthly = Calculator.sum(projections);
